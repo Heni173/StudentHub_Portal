@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
     <title>Feedback</title>
 </head>
 
-<body>
+<body style="text-align: center;">
 
-<center>
-
-<img src="logo.jpeg" alt="Student Hub Logo" width="250">
-
-<h1>STUDENT HUB</h1>
+    <header>
+        <img src="logo.jpeg" alt="Student Hub Logo" width="250">
+        <h1>STUDENT HUB</h1>
 
         <nav>
             <hr>
@@ -22,42 +21,46 @@
             <a href="Events.html">Events</a> |
             <a href="About.html">About us</a> |
             <a href="ContactUs.html">Contact Us</a> |
-            <a href="Feedback.html">Feedback</a>|
+            <a href="Feedback.html">Feedback</a> |
             <a href="location.html">Location</a>
             <hr>
         </nav>
+    </header>
 
+    <main>
+        <section>
+            <h2>Share your valuable Feedback</h2>
 
-<h2> Share your valueable Feedback</h2>
+            <form>
+                <label for="name"><b>Name</b></label><br>
+                <input type="text" id="name" placeholder="Enter Your Name"><br><br>
 
-<form>
+                <label for="email"><b>Email</b></label><br>
+                <input type="email" id="email" placeholder="Enter Your Email"><br><br>
 
-<b>Name</b><br>
-<input type="text" placeholder="Enter Your Name"><br><br>
+                <label for="feedback"><b>Feedback</b></label><br>
+                <textarea id="feedback" rows="3" cols="30" placeholder="Write your feedback"></textarea><br><br>
 
-<b>Email</b><br>
-<input type="email" placeholder="Enter Your Email"><br><br>
+                <input type="submit" value="Submit">
+                <input type="reset" value="Clear">
+            </form>
+        </section>
 
-<b>Feedback</b><br>
-<textarea rows="3" cols="30" placeholder="Write your feedback"></textarea><br><br>
+        <hr>
 
-<input type="submit" value="Submit">
-<input type="reset" value="Clear">
+        <section>
+            <p><b>Thank You!</b><br>
+            Your feedback helps us improve Student Hub.</p>
+        </section>
+    </main>
 
-</form>
+    <hr>
 
-<hr>
-
-<p><b>Thank You!</b><br>
-Your feedback helps us improve Student Hub.</p>
-
-<hr>
-
-<p><b>Student Hub</b></p>
-<p>Learn • Explore • Grow</p>
-<p>© 2026 Student Hub. All Rights Reserved.</p>
-
-</center>
+    <footer>
+        <p><b>Student Hub</b></p>
+        <p>Learn • Explore • Grow</p>
+        <p>© 2026 Student Hub. All Rights Reserved.</p>
+    </footer>
 
 </body>
 
