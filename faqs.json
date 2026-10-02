@@ -1,0 +1,62 @@
+[
+    {
+        "question": "What is Student Hub?",
+        "answer": "Student Hub is a digital campus portal that helps students access college information, events, profiles and other useful resources."
+    },
+    {
+        "question": "How can I register?",
+        "answer": "You can register by clicking the Register option in the navigation menu and filling in the required details."
+    },
+    {
+        "question": "Where can I check upcoming events?",
+        "answer": "You can check upcoming college events by visiting the Events page."
+    },
+    {
+        "question": "How can I check my attendance?",
+        "answer": "You can check your attendance information from the Dashboard page."
+    },
+    {
+        "question": "How can I update my profile?",
+        "answer": "You can update your personal information by visiting the Profile page."
+    },
+    {
+        "question": "How can I contact Student Hub?",
+        "answer": "You can contact Student Hub by visiting the Contact Us page and using the available contact information."
+    },
+    {
+        "question": "Where can I find college announcements?",
+        "answer": "The latest college announcements are displayed on the Home page."
+    },
+    {
+        "question": "Can I view my academic details?",
+        "answer": "Yes, you can view your academic details such as CGPA, attendance and student status on the Profile or Dashboard page."
+    },
+    {
+        "question": "How can I give feedback?",
+        "answer": "You can give your feedback by visiting the Feedback page and submitting the feedback form."
+    },
+    {
+        "question": "How can I find the college location?",
+        "answer": "You can find the college location by visiting the Location page."
+    },
+    {
+        "question": "Can I use Student Hub on mobile devices?",
+        "answer": "Yes, Student Hub is designed to be responsive and can be used on mobile phones, tablets and computers."
+    },
+    {
+        "question": "How can I change the website theme?",
+        "answer": "You can click the theme button at the top of the page to switch between light mode and dark mode."
+    },
+    {
+        "question": "Does Student Hub remember my selected theme?",
+        "answer": "Yes, the selected theme is stored using localStorage, so it can be remembered when you reopen the website."
+    },
+    {
+        "question": "How can I open the navigation menu on mobile?",
+        "answer": "On smaller screens, click the hamburger menu button to open or close the navigation menu."
+    },
+    {
+        "question": "What information is available on the Dashboard?",
+        "answer": "The Dashboard can provide useful student information such as attendance, academic details, announcements and other important updates."
+    }
+]

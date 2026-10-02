@@ -1,0 +1,107 @@
+[
+  {
+    "id": 1,
+    "subject": "Object Oriented Programming",
+    "assignmentTitle": "Inheritance and Polymorphism",
+    "submissionDate": "18 Jul 2026",
+    "status": "Graded (A+)"
+  },
+  {
+    "id": 2,
+    "subject": "Computer Network",
+    "assignmentTitle": "Error Detection and Error Correction",
+    "submissionDate": "20 Jul 2026",
+    "status": "Submitted"
+  },
+  {
+    "id": 3,
+    "subject": "Discrete Mathematics",
+    "assignmentTitle": "Predicates and Quantifiers",
+    "submissionDate": "22 Jul 2026",
+    "status": "Under Review"
+  },
+  {
+    "id": 4,
+    "subject": "Data Structure and Algorithm",
+    "assignmentTitle": "Sorting and Searching",
+    "submissionDate": "25 Jul 2026",
+    "status": "Submitted"
+  },
+  {
+    "id": 5,
+    "subject": "Web Development",
+    "assignmentTitle": "Responsive Registration Form",
+    "submissionDate": "27 Jul 2026",
+    "status": "Graded (A)"
+  },
+  {
+    "id": 6,
+    "subject": "Object Oriented Programming",
+    "assignmentTitle": "Abstract Classes and Interfaces",
+    "submissionDate": "29 Jul 2026",
+    "status": "Under Review"
+  },
+  {
+    "id": 7,
+    "subject": "Computer Network",
+    "assignmentTitle": "VLAN and Network Topology",
+    "submissionDate": "30 Jul 2026",
+    "status": "Submitted"
+  },
+  {
+    "id": 8,
+    "subject": "Discrete Mathematics",
+    "assignmentTitle": "Graph Theory and Applications",
+    "submissionDate": "01 Aug 2026",
+    "status": "Graded (A+)"
+  },
+  {
+    "id": 9,
+    "subject": "Data Structure and Algorithm",
+    "assignmentTitle": "Binary Search and Sorting",
+    "submissionDate": "03 Aug 2026",
+    "status": "Submitted"
+  },
+  {
+    "id": 10,
+    "subject": "Web Development",
+    "assignmentTitle": "JavaScript DOM Manipulation",
+    "submissionDate": "05 Aug 2026",
+    "status": "Graded (A)"
+  },
+  {
+    "id": 11,
+    "subject": "Object Oriented Programming",
+    "assignmentTitle": "Exception Handling in Java",
+    "submissionDate": "07 Aug 2026",
+    "status": "Under Review"
+  },
+  {
+    "id": 12,
+    "subject": "Computer Network",
+    "assignmentTitle": "IP Addressing and Subnetting",
+    "submissionDate": "09 Aug 2026",
+    "status": "Submitted"
+  },
+  {
+    "id": 13,
+    "subject": "Data Structure and Algorithm",
+    "assignmentTitle": "Linked List Operations",
+    "submissionDate": "11 Aug 2026",
+    "status": "Graded (A+)"
+  },
+  {
+    "id": 14,
+    "subject": "Web Development",
+    "assignmentTitle": "Fetch API and JSON Data",
+    "submissionDate": "13 Aug 2026",
+    "status": "Under Review"
+},
+{
+    "id": 15,
+    "subject": "Discrete Mathematics",
+    "assignmentTitle": "Set Theory and Relations",
+    "submissionDate": "15 Aug 2026",
+    "status": "Graded (A)"
+}
+]

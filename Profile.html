@@ -1,106 +1,487 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<title>Profile</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Hub - Profile</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #F8FAFC, #EAF4F8);
+            color: #2E2E2E;
+            transition: 0.3s;
+        }
+
+        header {
+            position: relative;
+            background: linear-gradient(135deg, #002147, #4dc8e0);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+        }
+
+        header img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid rgb(11, 0, 0);
+            padding: 5px;
+            background: white;
+            transition: 0.3s;
+        }
+
+        header img:hover {
+            transform: scale(1.05);
+        }
+
+        header h2 {
+            margin: 15px 0;
+            font-size: 36px;
+        }
+
+        header h3 {
+            font-size: 28px;
+        }
+
+        #themeButton {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            background: white;
+            color: #002147;
+            font-size: 21px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+            transition: 0.3s;
+        }
+
+        #themeButton:hover {
+            transform: scale(1.1);
+        }
+
+        #menuButton {
+            display: none;
+            margin: 15px auto 0;
+            border: none;
+            background: white;
+            color: #002147;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background: white;
+            color: #002147;
+            transform: translateY(-2px);
+        }
+
+        main {
+            width: 90%;
+            margin: auto;
+            padding: 45px 0;
+        }
+
+        .profile-box {
+            background: white;
+            width: 900px;
+            max-width: 95%;
+            margin: auto;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .profile-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .profile-box h3 {
+            color: #002147;
+            font-size: 32px;
+            margin-bottom: 25px;
+        }
+
+        .profile-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .profile-table th {
+            background: #002147;
+            color: white;
+            padding: 18px;
+            font-size: 22px;
+        }
+
+        .profile-table td {
+            border: 1px solid #ddd;
+            padding: 16px;
+            font-size: 20px;
+        }
+
+        .profile-table td:first-child {
+            font-weight: bold;
+            color: #002147;
+            width: 40%;
+        }
+
+        .profile-table tr {
+            transition: 0.3s;
+        }
+
+        .profile-table tr:hover {
+            background: #EAF4F8;
+        }
+
+        .info-box {
+            background: white;
+            width: 900px;
+            max-width: 95%;
+            margin: 30px auto;
+            padding: 30px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            transition: 0.3s;
+        }
+
+        .info-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .info-box h3 {
+            color: #002147;
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+
+        .academic-details {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .academic-card {
+            background: #F2FBFC;
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .academic-card h4 {
+            color: #005F73;
+            margin-bottom: 8px;
+        }
+
+        .academic-card p {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #002147, #4dc8e0);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        body.dark {
+            background: #121212;
+            color: white;
+        }
+
+        body.dark .profile-box,
+        body.dark .info-box {
+            background: #1e1e1e;
+            color: white;
+        }
+
+        body.dark .profile-box h3,
+        body.dark .info-box h3 {
+            color: #4dc8e0;
+        }
+
+        body.dark .profile-table td {
+            border-color: #444;
+            color: white;
+        }
+
+        body.dark .profile-table td:first-child {
+            color: #4dc8e0;
+        }
+
+        body.dark .profile-table tr:hover {
+            background: #292929;
+        }
+
+        body.dark .academic-card {
+            background: #292929;
+            color: white;
+        }
+
+        body.dark .academic-card h4 {
+            color: #4dc8e0;
+        }
+
+        body.dark #themeButton {
+            background: #292929;
+            color: #4dc8e0;
+        }
+
+        @media(max-width: 700px) {
+
+            #themeButton {
+                top: 15px;
+                right: 15px;
+            }
+
+            #menuButton {
+                display: block;
+            }
+
+            #navigation {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #navigation.show {
+                display: flex;
+            }
+
+            nav a {
+                width: 220px;
+                text-align: center;
+            }
+
+            header img {
+                width: 140px;
+                height: 140px;
+            }
+
+            header h2 {
+                font-size: 30px;
+            }
+
+            header h3 {
+                font-size: 23px;
+            }
+
+            .profile-box,
+            .info-box {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .profile-table th,
+            .profile-table td {
+                font-size: 15px;
+                padding: 10px;
+            }
+
+            .academic-card {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
 </head>
 
 <body>
-<center>
 
-<header>
-<img src="logo.jpeg" alt="Student Hub Logo" width="250">
+    <header>
 
-<h2>STUDENT HUB</h2>
-<h3>My Profile</h3>
+        <button id="themeButton" type="button" title="Change Theme">
+            🌙
+        </button>
 
-<nav>
-<hr>
-<a href="Home.html">Home</a> |
-<a href="Register.html">Register</a> |
-<a href="Dashboard.html">Dashboard</a> |
-<a href="Profile.html">Profile</a> |
-<a href="Events.html">Events</a> |
-<a href="About.html">About Us</a> |
-<a href="ContactUs.html">Contact Us</a> |
-<a href="Feedback.html">Feedback</a> |
-<a href="Location.html">Location</a>
-<hr>
-</nav>
-</header>
+        <img src="logo.jpeg" alt="Student Hub Logo">
 
-<main>
+        <h2>STUDENT HUB</h2>
 
-<section>
-<table border="1" width="40%" cellpadding="3" cellspacing="0">
-<tr>
-<th colspan="2">Student Information</th>
-</tr>
+        <h3>My Profile</h3>
 
-<tr>
-<td>Name</td>
-<td>Heni Patel</td>
-</tr>
+        <button id="menuButton" type="button">
+            ☰ Menu
+        </button>
 
-<tr>
-<td>Enrollment No.</td>
-<td>25CS061</td>
-</tr>
+        <nav id="navigation">
 
-<tr>
-<td>Department</td>
-<td>Computer Science Engineering</td>
-</tr>
+            <a href="Home.html">Home</a>
+            <a href="Register.html">Register</a>
+            <a href="Dashboard.html">Dashboard</a>
+            <a href="Profile.html" class="active">Profile</a>
+            <a href="Events.html">Events</a>
+            <a href="About.html">About Us</a>
+            <a href="ContactUs.html">Contact Us</a>
+            <a href="Feedback.html">Feedback</a>
+            <a href="Location.html">Location</a>
 
-<tr>
-<td>Semester</td>
-<td>3</td>
-</tr>
+        </nav>
 
-<tr>
-<td>Email</td>
-<td>25cs061@xyz.gmail.com</td>
-</tr>
+    </header>
 
-<tr>
-<td>Phone</td>
-<td>7984XXXXXX</td>
-</tr>
+    <main>
 
-<tr>
-<td>Address</td>
-<td>Tithal Road, Valsad, Gujarat - 396001</td>
-</tr>
-</table>
-</section>
+        <section class="profile-box">
 
-<section>
-<hr>
-<h4>Academic Details</h4>
+            <h3>👤 Student Information</h3>
 
-<p>CGPA : 8.18 | Attendance : 90% | Status : Active</p>
-</section>
+            <table class="profile-table">
 
-<section>
-<hr>
-<h4>Quick Access</h4>
+                <thead>
 
-<p>
-<a href="Dashboard.html">Dashboard</a> |
-<a href="Events.html">Events</a> |
-<a href="Feedback.html">Feedback</a> |
-<a href="ContactUs.html">Contact Us</a>
-</p>
-</section>
+                    <tr>
+                        <th>Field</th>
+                        <th>Details</th>
+                    </tr>
 
-</main>
+                </thead>
 
-<footer>
-<hr>
-<p><b>Student Hub</b></p>
-<p>Learn • Explore • Grow</p>
-<p>&copy; 2026 Student Hub. All Rights Reserved.</p>
-</footer>
+                <tbody id="profileBody">
 
-</center>
+                    <tr>
+                        <td>Full Name</td>
+                        <td>Heni Patel</td>
+                    </tr>
+
+                    <tr>
+                        <td>Enrollment Number</td>
+                        <td>25CS061</td>
+                    </tr>
+
+                    <tr>
+                        <td>Course</td>
+                        <td>Computer Science and Engineering</td>
+                    </tr>
+
+                    <tr>
+                        <td>Department</td>
+                        <td>Computer Science</td>
+                    </tr>
+
+                    <tr>
+                        <td>Division</td>
+                        <td>2</td>
+                    </tr>
+
+                    <tr>
+                        <td>Batch</td>
+                        <td>A2</td>
+                    </tr>
+
+                    <tr>
+                        <td>College</td>
+                        <td>CHARUSAT</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+        <section class="info-box">
+
+            <h3>📊 Academic Details</h3>
+
+            <div class="academic-details">
+
+                <div class="academic-card">
+
+                    <h4>📈 CGPA</h4>
+
+                    <p>8.5</p>
+
+                </div>
+
+                <div class="academic-card">
+
+                    <h4>📅 Attendance</h4>
+
+                    <p>85%</p>
+
+                </div>
+
+                <div class="academic-card">
+
+                    <h4>✓ Status</h4>
+
+                    <p>Active Student</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+
+        <p><b>Student Hub</b></p>
+        <p>Learn • Explore • Grow</p>
+        <p>&copy; 2026 Student Hub. All Rights Reserved.</p>
+        <p>Designed & Developed by Heni Patel</p>
+
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="Profile.js"></script>
+
 </body>
+
 </html>

@@ -1,113 +1,1097 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<title>Dashboard</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Hub - Dashboard</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#F8FAFC,#EAF4F8);
+    color:#2E2E2E;
+    transition:0.3s;
+}
+
+
+/* NOTIFICATION */
+
+#notification{
+    background:#005F73;
+    color:white;
+    padding:12px;
+    text-align:center;
+    font-weight:bold;
+}
+
+#closeNotification{
+    margin-left:15px;
+    border:none;
+    padding:5px 10px;
+    border-radius:15px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+#closeNotification:hover{
+    transform:scale(1.1);
+}
+
+
+/* THEME BUTTON */
+
+#themeButton{
+    position:absolute;
+    top:18px;
+    right:25px;
+    width:44px;
+    height:44px;
+    border:none;
+    border-radius:50%;
+    background:white;
+    color:#002147;
+    font-size:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+    transition:0.3s;
+    z-index:10;
+}
+
+#themeButton:hover{
+    transform:scale(1.1);
+}
+
+
+/* HAMBURGER */
+
+#menuButton{
+    display:none;
+    background:white;
+    color:#002147;
+    border:none;
+    padding:10px 20px;
+    border-radius:25px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+#menuButton:hover{
+    transform:scale(1.05);
+}
+
+
+/* HEADER */
+
+header{
+    position:relative;
+    background:linear-gradient(135deg,#002147,#4dc8e0);
+    color:white;
+    text-align:center;
+    padding:30px 20px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.18);
+}
+
+header img{
+    width:180px;
+    height:180px;
+    object-fit:cover;
+    border-radius:50%;
+    border:5px solid rgb(13,0,0);
+    padding:5px;
+    background:white;
+}
+
+header h2{
+    margin:15px 0;
+    font-size:36px;
+}
+
+header h3{
+    font-size:26px;
+}
+
+
+/* NAVIGATION */
+
+nav{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:20px;
+}
+
+nav a{
+    text-decoration:none;
+    color:white;
+    background:rgba(255,255,255,0.15);
+    padding:10px 18px;
+    border-radius:25px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+nav a:hover,
+nav a.active{
+    background:white;
+    color:#002147;
+    transform:translateY(-2px);
+}
+
+
+/* MAIN */
+
+main{
+    width:92%;
+    max-width:1250px;
+    margin:auto;
+    padding:45px 0;
+}
+
+
+/* DASHBOARD BOX */
+
+.dashboard-box{
+    background:white;
+    width:100%;
+    padding:35px;
+    border-radius:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.12);
+    margin-bottom:35px;
+    text-align:center;
+    transition:0.3s;
+}
+
+.dashboard-box h3{
+    color:#002147;
+    font-size:30px;
+    margin-bottom:30px;
+}
+
+
+/* SUMMARY CARDS */
+
+.summary-table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:18px;
+}
+
+.summary-table td{
+    width:33.33%;
+    background:linear-gradient(135deg,#F8FAFC,#EAF4F8);
+    padding:28px 20px;
+    border-radius:18px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+    font-size:18px;
+    transition:0.3s;
+    cursor:pointer;
+}
+
+.summary-table td:hover{
+    transform:translateY(-7px);
+    box-shadow:0 12px 25px rgba(0,0,0,0.16);
+}
+
+.summary-icon{
+    font-size:38px;
+    margin-bottom:12px;
+}
+
+.summary-title{
+    display:block;
+    color:#002147;
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.summary-number{
+    font-size:27px;
+    font-weight:bold;
+    color:#005F73;
+}
+
+.summary-description{
+    font-size:15px;
+    color:#555;
+    margin-top:5px;
+}
+
+
+/* SEARCH AND FILTER */
+
+.submission-controls{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+    margin-bottom:25px;
+    flex-wrap:wrap;
+}
+
+#submissionSearch{
+    width:45%;
+    min-width:250px;
+    padding:13px 20px;
+    border:1px solid #ccc;
+    border-radius:30px;
+    outline:none;
+    font-size:16px;
+    transition:0.3s;
+}
+
+#statusFilter,
+#sortFilter{
+    width:190px;
+    padding:13px 18px;
+    border:1px solid #ccc;
+    border-radius:30px;
+    outline:none;
+    font-size:16px;
+    background:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+#submissionSearch:focus,
+#statusFilter:focus,
+#sortFilter:focus{
+    border-color:#005F73;
+    box-shadow:0 0 0 3px rgba(0,95,115,0.12);
+}
+
+body.dark #submissionSearch,
+body.dark #statusFilter,
+body.dark #sortFilter{
+    background:#292929;
+    color:white;
+    border-color:#555;
+}
+
+body.dark #submissionSearch:focus,
+body.dark #statusFilter:focus,
+body.dark #sortFilter:focus{
+    border-color:#4dc8e0;
+    box-shadow:0 0 0 3px rgba(77,200,224,0.15);
+}
+
+
+/* RECENT SUBMISSION TABLE */
+
+.table-container{
+    width:100%;
+    overflow-x:auto;
+    border-radius:12px;
+}
+
+.details-table{
+    width:100%;
+    min-width:850px;
+    border-collapse:collapse;
+    background:white;
+    overflow:hidden;
+}
+
+.details-table th{
+    background:#002147;
+    color:white;
+    padding:17px 14px;
+    font-size:18px;
+    text-align:center;
+}
+
+.details-table td{
+    padding:18px 14px;
+    border:1px solid #ddd;
+    font-size:17px;
+    text-align:center;
+    vertical-align:middle;
+}
+
+.details-table tbody tr{
+    transition:0.3s;
+}
+
+.details-table tbody tr:hover{
+    background:#EAF4F8;
+    transform:scale(1.005);
+}
+
+
+/* LOADING */
+
+#loadingSubmissions{
+    text-align:center;
+    padding:25px;
+    color:#005F73;
+    font-size:17px;
+    font-weight:bold;
+}
+
+body.dark #loadingSubmissions{
+    color:#4dc8e0;
+}
+
+
+/* NO RESULT */
+
+#noSubmission{
+    display:none;
+    text-align:center;
+    padding:25px;
+    color:#777;
+    font-size:17px;
+}
+
+body.dark #noSubmission{
+    color:#ccc;
+}
+
+
+/* PAGINATION */
+
+#pagination{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-top:25px;
+    flex-wrap:wrap;
+}
+
+.page-button{
+    border:none;
+    background:#EAF4F8;
+    color:#002147;
+    min-width:40px;
+    height:40px;
+    padding:0 13px;
+    border-radius:20px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.page-button:hover{
+    background:#4dc8e0;
+    color:#002147;
+    transform:translateY(-2px);
+}
+
+.page-button.active{
+    background:#002147;
+    color:white;
+}
+
+.page-button:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+    transform:none;
+}
+
+body.dark .page-button{
+    background:#333;
+    color:white;
+}
+
+body.dark .page-button:hover{
+    background:#4dc8e0;
+    color:#002147;
+}
+
+body.dark .page-button.active{
+    background:#4dc8e0;
+    color:#002147;
+}
+
+
+/* TABLE ICONS */
+
+.table-icon{
+    font-size:22px;
+    margin-right:7px;
+}
+
+
+/* STATUS BADGES */
+
+.status{
+    display:inline-block;
+    padding:7px 13px;
+    border-radius:20px;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.status.graded{
+    background:#d9f7e5;
+    color:#087443;
+}
+
+.status.submitted{
+    background:#dceeff;
+    color:#005F73;
+}
+
+.status.review{
+    background:#fff0c9;
+    color:#8a6100;
+}
+
+
+/* FOOTER */
+
+footer{
+    background:linear-gradient(135deg,#002147,#4dc8e0);
+    color:white;
+    text-align:center;
+    padding:20px;
+    margin-top:40px;
+}
+
+footer p{
+    margin:5px 0;
+}
+
+
+/* DARK MODE */
+
+body.dark{
+    background:#121212;
+    color:white;
+}
+
+body.dark header{
+    background:linear-gradient(135deg,#002147,#4dc8e0);
+}
+
+body.dark footer{
+    background:linear-gradient(135deg,#002147,#4dc8e0);
+}
+
+body.dark .dashboard-box{
+    background:#1e1e1e;
+    color:white;
+}
+
+body.dark .dashboard-box h3{
+    color:#4dc8e0;
+}
+
+body.dark .summary-table td{
+    background:#292929;
+    color:white;
+}
+
+body.dark .summary-table td:hover{
+    background:#333;
+}
+
+body.dark .summary-title{
+    color:#4dc8e0;
+}
+
+body.dark .summary-number{
+    color:#4dc8e0;
+}
+
+body.dark .summary-description{
+    color:#ccc;
+}
+
+body.dark .details-table{
+    background:#1e1e1e;
+}
+
+body.dark .details-table td{
+    background:#1e1e1e;
+    color:white;
+    border-color:#555;
+}
+
+body.dark .details-table tbody tr:hover{
+    background:#333;
+}
+
+body.dark .details-table th{
+    background:#002147;
+    color:white;
+}
+
+
+/* TABLET */
+
+@media(max-width:900px){
+
+    main{
+        width:94%;
+    }
+
+    .dashboard-box{
+        padding:25px;
+    }
+
+    .summary-table{
+        border-spacing:10px;
+    }
+
+    .summary-table td{
+        padding:22px 12px;
+    }
+
+    #submissionSearch{
+        width:50%;
+    }
+
+}
+
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    #menuButton{
+        display:block;
+        margin:15px auto;
+    }
+
+    #navigation{
+        display:none;
+        flex-direction:column;
+        align-items:center;
+    }
+
+    #navigation.show{
+        display:flex;
+    }
+
+    nav a{
+        width:220px;
+        text-align:center;
+    }
+
+    #themeButton{
+        top:15px;
+        right:15px;
+    }
+
+    header{
+        padding:25px 15px;
+    }
+
+    header img{
+        width:135px;
+        height:135px;
+    }
+
+    header h2{
+        font-size:28px;
+    }
+
+    header h3{
+        font-size:22px;
+    }
+
+    main{
+        width:94%;
+        padding:25px 0;
+    }
+
+    .dashboard-box{
+        padding:20px 14px;
+        border-radius:16px;
+    }
+
+    .dashboard-box h3{
+        font-size:25px;
+        margin-bottom:20px;
+    }
+
+
+    /* SEARCH AND FILTER */
+
+    .submission-controls{
+        flex-direction:column;
+        gap:12px;
+    }
+
+    #submissionSearch,
+    #statusFilter,
+    #sortFilter{
+        width:90%;
+        min-width:0;
+    }
+
+
+    /* SUMMARY CARDS */
+
+    .summary-table,
+    .summary-table tbody,
+    .summary-table tr{
+        display:block;
+        width:100%;
+    }
+
+    .summary-table{
+        border-spacing:0;
+    }
+
+    .summary-table td{
+        display:block;
+        width:100%;
+        margin-bottom:15px;
+        padding:22px 15px;
+    }
+
+    .summary-icon{
+        font-size:34px;
+    }
+
+    .summary-title{
+        font-size:19px;
+    }
+
+    .summary-number{
+        font-size:25px;
+    }
+
+
+    /* RECENT SUBMISSIONS AS MOBILE CARDS */
+
+    .table-container{
+        overflow:visible;
+    }
+
+    .details-table{
+        min-width:0;
+        width:100%;
+        display:block;
+        background:transparent;
+    }
+
+    .details-table thead{
+        display:none;
+    }
+
+    .details-table tbody{
+        display:block;
+        width:100%;
+    }
+
+    .details-table tr{
+        display:block;
+        width:100%;
+        margin-bottom:18px;
+        background:white;
+        border-radius:15px;
+        box-shadow:0 5px 15px rgba(0,0,0,0.10);
+        overflow:hidden;
+        border:1px solid #ddd;
+    }
+
+    .details-table td{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:15px;
+        width:100%;
+        min-height:55px;
+        padding:13px 14px;
+        border:none;
+        border-bottom:1px solid #e0e0e0;
+        text-align:right;
+        font-size:15px;
+        background:white;
+    }
+
+    .details-table td:last-child{
+        border-bottom:none;
+    }
+
+    .details-table td::before{
+        content:attr(data-label);
+        font-weight:bold;
+        color:#002147;
+        text-align:left;
+        min-width:100px;
+    }
+
+    .details-table td:nth-child(1)::before{
+        content:"📚 Subject";
+    }
+
+    .details-table td:nth-child(2)::before{
+        content:"📝 Assignment";
+    }
+
+    .details-table td:nth-child(3)::before{
+        content:"📅 Date";
+    }
+
+    .details-table td:nth-child(4)::before{
+        content:"📊 Status";
+    }
+
+    body.dark .details-table tr{
+        background:#1e1e1e;
+        border-color:#444;
+    }
+
+    body.dark .details-table td{
+        background:#1e1e1e;
+        color:white;
+        border-color:#444;
+    }
+
+    body.dark .details-table td::before{
+        color:#4dc8e0;
+    }
+
+    .status{
+        font-size:12px;
+        padding:6px 10px;
+    }
+
+}
+
+
+/* SMALL MOBILE */
+
+@media(max-width:400px){
+
+    .dashboard-box{
+        padding:17px 10px;
+    }
+
+    .dashboard-box h3{
+        font-size:22px;
+    }
+
+    .details-table td{
+        font-size:14px;
+        padding:12px 10px;
+    }
+
+    .details-table td::before{
+        min-width:90px;
+        font-size:13px;
+    }
+
+    .status{
+        font-size:11px;
+    }
+
+}
+
+</style>
+
 </head>
 
+
 <body>
-<center>
+
+
+<!-- NOTIFICATION -->
+
+<div id="notification">
+
+    🔔 New updates are available!
+
+    <button id="closeNotification" type="button" aria-label="Close notification">
+        ✕
+    </button>
+
+</div>
+
+
+<!-- HEADER -->
 
 <header>
-<img src="logo.jpeg" width="250">
 
-<h2>STUDENT HUB</h2>
-<h3>Dashboard</h3>
+    <button id="themeButton" type="button" title="Change theme" aria-label="Change theme">
+        🌙
+    </button>
 
-<nav>
-<hr>
-<a href="Home.html">Home</a> |
-<a href="Register.html">Register</a> |
-<a href="Dashboard.html">Dashboard</a> |
-<a href="Profile.html">Profile</a> |
-<a href="Events.html">Events</a> |
-<a href="About.html">About Us</a> |
-<a href="ContactUs.html">Contact Us</a> |
-<a href="Feedback.html">Feedback</a> |
-<a href="Location.html">Location</a>
-<hr>
-</nav>
+    <img src="logo.jpeg" alt="Student Hub Logo">
+
+    <h2>STUDENT HUB</h2>
+
+    <h3>Dashboard</h3>
+
+    <button id="menuButton" type="button" aria-label="Open navigation menu">
+        ☰ Menu
+    </button>
+
+    <nav id="navigation">
+
+        <a href="Home.html">Home</a>
+
+        <a href="Register.html">Register</a>
+
+        <a href="Dashboard.html" class="active">Dashboard</a>
+
+        <a href="Profile.html">Profile</a>
+
+        <a href="Events.html">Events</a>
+
+        <a href="About.html">About Us</a>
+
+        <a href="ContactUs.html">Contact Us</a>
+
+        <a href="Feedback.html">Feedback</a>
+
+        <a href="Location.html">Location</a>
+
+    </nav>
+
 </header>
+
+
+<!-- MAIN -->
 
 <main>
 
-<section>
-<h3>Dashboard Summary</h3>
 
-<table border="1" cellpadding="10" cellspacing="5">
-<tr>
-<td align="center">
-<b>Total Assignments</b><br><br>
-12 / 15<br>
-Submitted Successfully
-</td>
+<!-- DASHBOARD SUMMARY -->
 
-<td align="center">
-<b>Upcoming Deadlines</b><br><br>
-2 Pending<br>
-Due This Week
-</td>
+<section class="dashboard-box">
 
-<td align="center">
-<b>Exam Schedule</b><br><br>
-Mid-Sem<br>
-Starts Next Month
-</td>
-</tr>
-</table>
+    <h3>📊 Dashboard Summary</h3>
+
+    <table class="summary-table">
+
+        <tr>
+
+            <td>
+
+                <div class="summary-icon">📚</div>
+
+                <span class="summary-title">
+                    Total Assignments
+                </span>
+
+                <div class="summary-number">
+                    12 / 15
+                </div>
+
+                <div class="summary-description">
+                    Submitted Successfully
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="summary-icon">⏰</div>
+
+                <span class="summary-title">
+                    Upcoming Deadlines
+                </span>
+
+                <div class="summary-number">
+                    2 Pending
+                </div>
+
+                <div class="summary-description">
+                    Due This Week
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <div class="summary-icon">🗓️</div>
+
+                <span class="summary-title">
+                    Exam Schedule
+                </span>
+
+                <div class="summary-number">
+                    Mid-Sem
+                </div>
+
+                <div class="summary-description">
+                    Starts Next Month
+                </div>
+
+            </td>
+
+        </tr>
+
+    </table>
+
 </section>
 
-<br>
 
-<section>
-<h3>Recent Submission Details</h3>
+<!-- RECENT SUBMISSIONS -->
 
-<table border="1" cellpadding="8">
-<tr>
-<th>Subject</th>
-<th>Assignment Title</th>
-<th>Submission Date</th>
-<th>Status</th>
-</tr>
+<section class="dashboard-box">
 
-<tr>
-<td>Object Oriented Programming</td>
-<td>C++ Classes & Inheritance</td>
-<td>18 Jul 2026</td>
-<td>Graded (A+)</td>
-</tr>
+    <h3>📋 Recent Submission Details</h3>
 
-<tr>
-<td>Digital Electronics</td>
-<td>Shift Register Analysis</td>
-<td>20 Jul 2026</td>
-<td>Submitted</td>
-</tr>
 
-<tr>
-<td>Advanced Mathematics</td>
-<td>Double Integration Worksheet</td>
-<td>22 Jul 2026</td>
-<td>Under Review</td>
-</tr>
+    <!-- SEARCH AND FILTER -->
 
-<tr>
-<td>Programming in C</td>
-<td>File Handling Program</td>
-<td>25 Jul 2026</td>
-<td>Submitted</td>
-</tr>
-</table>
+    <div class="submission-controls">
+
+        <input
+            type="text"
+            id="submissionSearch"
+            placeholder="🔍 Search subject or assignment..."
+            aria-label="Search submissions">
+
+
+        <select
+            id="statusFilter"
+            aria-label="Filter submissions by status">
+
+            <option value="all">
+                📊 All Status
+            </option>
+
+            <option value="graded">
+                ✓ Graded
+            </option>
+
+            <option value="submitted">
+                ✓ Submitted
+            </option>
+
+            <option value="review">
+                ⏳ Under Review
+            </option>
+
+        </select>
+
+
+        <!-- ADDED SORTING -->
+
+        <select
+            id="sortFilter"
+            aria-label="Sort submissions">
+
+            <option value="default">
+                ↕ Sort By
+            </option>
+
+            <option value="subjectAsc">
+                Subject A - Z
+            </option>
+
+            <option value="subjectDesc">
+                Subject Z - A
+            </option>
+
+            <option value="dateAsc">
+                Date Oldest - Newest
+            </option>
+
+            <option value="dateDesc">
+                Date Newest - Oldest
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="table-container">
+
+
+        <!-- ADDED LOADING STATE -->
+
+        <div id="loadingSubmissions">
+            ⏳ Loading submission data...
+        </div>
+
+
+        <table class="details-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>📚 Subject</th>
+
+                    <th>📝 Assignment Title</th>
+
+                    <th>📅 Submission Date</th>
+
+                    <th>📊 Status</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="submissionBody">
+
+                <tr>
+                    <td colspan="4">Loading submissions...</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+
+        <div id="noSubmission">
+            🔍 No submissions found.
+        </div>
+
+
+        <!-- ADDED PAGINATION -->
+
+        <div id="pagination"></div>
+
+    </div>
+
 </section>
+
 
 </main>
 
+
+<!-- FOOTER -->
+
 <footer>
-<hr>
-<p><b>Student Hub</b></p>
-<p>Learn • Explore • Grow</p>
-<p>&copy; 2026 Student Hub. All Rights Reserved.</p>
+
+    <p><b>Student Hub</b></p>
+
+    <p>Learn • Explore • Grow</p>
+
+    <p>&copy; 2026 Student Hub. All Rights Reserved.</p>
+
+    <p>Designed & Developed by Heni Patel</p>
+
 </footer>
 
-</center>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="Dashboard.js"></script>
+
+
 </body>
+
 </html>

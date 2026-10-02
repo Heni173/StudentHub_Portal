@@ -1,88 +1,1107 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Student Hub - Welcome</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #F8FAFC, #EAF4F8);
+            color: #2E2E2E;
+            transition: 0.4s;
+        }
+
+        #notification {
+            background: #005F73;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        #closeNotification {
+            margin-left: 15px;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #closeNotification:hover {
+            transform: scale(1.1);
+        }
+
+        header {
+            position: relative;
+            background: linear-gradient(135deg, #002147, #4dc8e0);
+            color: white;
+            text-align: center;
+            padding: 35px 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+        }
+
+        header img.logo {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid rgb(13, 0, 0);
+            padding: 6px;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+            transition: 0.4s;
+        }
+
+        header img.logo:hover {
+            transform: scale(1.08);
+        }
+
+        header h1 {
+            margin: 18px 0;
+            font-size: 38px;
+            letter-spacing: 2px;
+        }
+
+        #themeButton {
+            position: absolute;
+            top: 18px;
+            right: 25px;
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 50%;
+            background: white;
+            color: #002147;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+        }
+
+        #themeButton:hover {
+            transform: scale(1.1);
+        }
+
+        #menuButton {
+            display: none;
+            background: white;
+            color: #002147;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #menuButton:hover {
+            transform: scale(1.05);
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 15px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            background: white;
+            color: #002147;
+            transform: translateY(-3px);
+        }
+
+        main {
+            width: 90%;
+            margin: auto;
+            padding: 45px 0;
+        }
+
+        .slider-section {
+            margin-bottom: 40px;
+        }
+
+        .slider-section h2 {
+            text-align: center;
+            color: #002147;
+            margin-bottom: 25px;
+            font-size: 30px;
+        }
+
+        .slider {
+            position: relative;
+            max-width: 900px;
+            height: 400px;
+            margin: auto;
+            overflow: hidden;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            background: white;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide.active {
+            display: block;
+            animation: fade 0.6s ease;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .prev,
+        .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: rgba(0, 0, 0, 0.55);
+            color: white;
+            font-size: 25px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 5;
+            transition: 0.3s;
+        }
+
+        .prev {
+            left: 15px;
+        }
+
+        .next {
+            right: 15px;
+        }
+
+        .prev:hover,
+        .next:hover {
+            background: #005F73;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .dots {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin: 5px;
+            border-radius: 50%;
+            background: #bbb;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dot:hover {
+            transform: scale(1.2);
+        }
+
+        .dot.active {
+            background: #005F73;
+            transform: scale(1.15);
+        }
+
+        @keyframes fade {
+
+            from {
+                opacity: 0.4;
+            }
+
+            to {
+                opacity: 1;
+            }
+
+        }
+
+        .welcome {
+            background: white;
+            border-radius: 18px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+            transition: 0.3s;
+        }
+
+        .welcome:hover {
+            transform: translateY(-6px);
+        }
+
+        .welcome h2 {
+            color: #002147;
+            margin-bottom: 18px;
+            font-size: 32px;
+        }
+
+        .welcome p {
+            font-size: 20px;
+            line-height: 1.8;
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .portal-button {
+            display: inline-block;
+            margin-top: 25px;
+            color: white;
+            background: linear-gradient(135deg, #002147, #005F73);
+            padding: 13px 30px;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .portal-button:hover {
+            transform: scale(1.06);
+        }
+
+        .announcement-title {
+            text-align: center;
+            color: #002147;
+            font-size: 30px;
+            margin-bottom: 25px;
+        }
+
+        .announcement-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        article {
+            background: white;
+            border-top: 5px solid #005F73;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        article:hover {
+            background: #F2FBFC;
+            transform: translateY(-8px);
+        }
+
+        .announcement-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: #EAF4F8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+            margin-bottom: 15px;
+        }
+
+        article h4 {
+            color: #002147;
+            font-size: 21px;
+            margin-bottom: 10px;
+        }
+
+        article p {
+            line-height: 1.6;
+        }
+
+        .faq-section {
+            margin-top: 50px;
+        }
+
+        .faq-section h2 {
+            text-align: center;
+            color: #002147;
+            margin-bottom: 25px;
+            font-size: 30px;
+        }
+
+        .faq-controls {
+            max-width: 850px;
+            margin: 0 auto 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        #faqSearch {
+            width: 65%;
+            min-width: 250px;
+            padding: 12px 18px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        #faqSort {
+            padding: 12px 18px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        #faqContainer {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .faq {
+            background: white;
+            margin: 12px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .faq:hover {
+            transform: translateY(-2px);
+        }
+
+        .faq-question {
+            width: 100%;
+            border: none;
+            background: white;
+            color: #002147;
+            padding: 18px;
+            text-align: left;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .faq-question:hover {
+            background: #F2FBFC;
+        }
+
+        .faq-answer {
+            display: none;
+            padding: 0 18px 18px;
+            line-height: 1.6;
+        }
+
+        .faq-answer.show {
+            display: block;
+        }
+
+        #faqPagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .page-button {
+            margin: 5px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            background: white;
+            color: #002147;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-button:hover {
+            background: #005F73;
+            color: white;
+        }
+
+        .page-button.active {
+            background: #005F73;
+            color: white;
+            font-weight: bold;
+        }
+
+        .page-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #modalBox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 420px;
+            max-width: 90%;
+            padding: 35px;
+            border-radius: 18px;
+            text-align: center;
+            animation: popup 0.3s ease;
+        }
+
+        .modal-content h2 {
+            color: #002147;
+            margin-bottom: 15px;
+        }
+
+        .modal-content p {
+            line-height: 1.6;
+        }
+
+        #loginButton,
+        #closeModal {
+            color: white;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #loginButton {
+            background: #002147;
+            margin-right: 10px;
+        }
+
+        #closeModal {
+            background: #777;
+        }
+
+        #loginButton:hover,
+        #closeModal:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes popup {
+
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+        }
+
+        footer {
+            background: linear-gradient(135deg, #002147, #4dc8e0);
+            color: white;
+            text-align: center;
+            padding: 22px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            margin: 6px 0;
+        }
+
+        body.dark {
+            background: #121212;
+            color: white;
+        }
+
+        body.dark .welcome,
+        body.dark article,
+        body.dark .faq {
+            background: #222;
+            color: white;
+        }
+
+        body.dark .welcome h2,
+        body.dark article h4,
+        body.dark .faq-section h2,
+        body.dark .slider-section h2,
+        body.dark .announcement-title {
+            color: #4dc8e0;
+        }
+
+        body.dark .announcement-icon {
+            background: #333;
+        }
+
+        body.dark .faq-question {
+            background: #222;
+            color: #4dc8e0;
+        }
+
+        body.dark .faq-question:hover {
+            background: #333;
+        }
+
+        body.dark .faq-answer {
+            color: white;
+        }
+
+        body.dark #faqSearch,
+        body.dark #faqSort {
+            background: #222;
+            color: white;
+            border-color: #555;
+        }
+
+        body.dark .page-button {
+            background: #333;
+            color: white;
+        }
+
+        body.dark .page-button.active {
+            background: #4dc8e0;
+            color: #002147;
+        }
+
+        body.dark .modal-content {
+            background: #222;
+            color: white;
+        }
+
+        body.dark .modal-content h2 {
+            color: #4dc8e0;
+        }
+
+        body.dark #themeButton {
+            background: #222;
+            color: #4dc8e0;
+        }
+
+        @media(max-width: 992px) {
+
+            .announcement-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media(max-width: 768px) {
+
+            header img.logo {
+                width: 140px;
+                height: 140px;
+            }
+
+            header h1 {
+                font-size: 30px;
+            }
+
+            #menuButton {
+                display: inline-block;
+            }
+
+            nav {
+                display: none;
+                flex-direction: column;
+            }
+
+            nav.show {
+                display: flex;
+            }
+
+            nav a {
+                width: 220px;
+                text-align: center;
+            }
+
+            main {
+                width: 95%;
+            }
+
+            .welcome {
+                padding: 25px;
+            }
+
+            .announcement-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #themeButton {
+                top: 15px;
+                right: 15px;
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+            }
+
+            .slider {
+                height: 250px;
+            }
+
+            .prev,
+            .next {
+                width: 38px;
+                height: 38px;
+                font-size: 20px;
+            }
+
+            .dot {
+                width: 10px;
+                height: 10px;
+                margin: 4px;
+            }
+
+            .faq-controls {
+                flex-direction: column;
+            }
+
+            #faqSearch,
+            #faqSort {
+                width: 90%;
+            }
+
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-    <center>
+    <div id="notification">
 
-        <header>
+        🔔 New updates are available!
 
-            <img src="logo.jpeg" alt="Student Hub Logo" width="250">
+        <button
+            id="closeNotification"
+            type="button"
+            aria-label="Close notification">
 
-            <h1>STUDENT HUB</h1>
+            ✕
 
-            <nav>
-                <hr>
-                <a href="Home.html">Home</a> |
-                <a href="Register.html">Register</a> |
-                <a href="Dashboard.html">Dashboard</a> |
-                <a href="Profile.html">Profile</a> |
-                <a href="Events.html">Events</a> |
-                <a href="About.html">About Us</a> |
-                <a href="ContactUs.html">Contact Us</a> |
-                <a href="Feedback.html">Feedback</a> |
-                <a href="location.html">Location</a>
-                <hr>
-            </nav>
+        </button>
 
-        </header>
+    </div>
 
-        <main>
 
-            <section>
+    <header>
 
-                <h2>Welcome to Your Digital Campus</h2>
+        <button
+            id="themeButton"
+            type="button"
+            title="Change theme"
+            aria-label="Change theme">
+
+            🌙
+
+        </button>
+
+
+        <img
+            class="logo"
+            src="logo.jpeg"
+            alt="Student Hub Logo">
+
+
+        <h1>
+            STUDENT HUB
+        </h1>
+
+
+        <button
+            id="menuButton"
+            type="button"
+            aria-label="Open navigation menu">
+
+            ☰ Menu
+
+        </button>
+
+
+        <nav id="navigation">
+
+            <a href="Home.html">Home</a>
+
+            <a href="Register.html">Register</a>
+
+            <a href="Dashboard.html">Dashboard</a>
+
+            <a href="Profile.html">Profile</a>
+
+            <a href="Events.html">Events</a>
+
+            <a href="About.html">About Us</a>
+
+            <a href="ContactUs.html">Contact Us</a>
+
+            <a href="Feedback.html">Feedback</a>
+
+            <a href="Location.html">Location</a>
+
+        </nav>
+
+    </header>
+
+
+    <main>
+
+        <section class="slider-section">
+
+            <h2>
+                🏫 Campus Highlights
+            </h2>
+
+            <div
+                class="slider"
+                aria-label="Campus image slider">
+
+                <div class="slide active">
+
+                    <img
+                        src="slide7.jpg"
+                        alt="Campus Highlight 1">
+
+                </div>
+
+                <div class="slide">
+
+                    <img
+                        src="slide9.jpg"
+                        alt="Campus Highlight 2">
+
+                </div>
+
+                <div class="slide">
+
+                    <img
+                        src="slide3.jpg"
+                        alt="Campus Highlight 3">
+
+                </div>
+
+                <div class="slide">
+
+                    <img
+                        src="slide4.jpg"
+                        alt="Campus Highlight 4">
+
+                </div>
+
+                <div class="slide">
+
+                    <img
+                        src="slide5.jpg"
+                        alt="Campus Highlight 5">
+
+                </div>
+
+                <button
+                    class="prev"
+                    id="prevButton"
+                    type="button"
+                    aria-label="Previous image">
+
+                    ❮
+
+                </button>
+
+                <button
+                    class="next"
+                    id="nextButton"
+                    type="button"
+                    aria-label="Next image">
+
+                    ❯
+
+                </button>
+
+            </div>
+
+
+            <div
+                class="dots"
+                aria-label="Select campus image">
+
+                <span
+                    class="dot active"
+                    data-slide="0"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Show image 1">
+                </span>
+
+                <span
+                    class="dot"
+                    data-slide="1"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Show image 2">
+                </span>
+
+                <span
+                    class="dot"
+                    data-slide="2"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Show image 3">
+                </span>
+
+                <span
+                    class="dot"
+                    data-slide="3"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Show image 4">
+                </span>
+
+                <span
+                    class="dot"
+                    data-slide="4"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Show image 5">
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <section class="welcome">
+
+            <h2>
+                🎓 Welcome to Your Digital Campus
+            </h2>
+
+            <p>
+                Your single destination for college updates,
+                dashboard tracking, profile management and
+                upcoming events information.
+            </p>
+
+
+            <button
+                class="portal-button"
+                id="modalButton"
+                type="button">
+
+                🔐 Login to Portal
+
+            </button>
+
+        </section>
+
+
+        <h2 class="announcement-title">
+            📢 Latest Announcements
+        </h2>
+
+
+        <section class="announcement-grid">
+
+            <article>
+
+                <div class="announcement-icon">
+                    📚
+                </div>
+
+                <h4>
+                    Attendance
+                </h4>
 
                 <p>
-                    Your single destination for college updates, dashboard tracking,
-                    profile management, and upcoming events information.
+                    Check your daily attendance in Dashboard.
                 </p>
 
-            </section>
+            </article>
 
-            <section>
 
-                <h3>Latest Announcements</h3>
+            <article>
 
-                <article>
-                    <p>&bull; Check your daily attendance in Dashboard.</p>
-                </article>
+                <div class="announcement-icon">
+                    🎉
+                </div>
 
-                <article>
-                    <p>&bull; New college events are uploaded inside Events tab.</p>
-                </article>
+                <h4>
+                    Events
+                </h4>
 
-                <article>
-                    <p>&bull; Update your current contact details in Profile.</p>
-                </article>
+                <p>
+                    New college events are uploaded inside Events tab.
+                </p>
 
-            </section>
+            </article>
 
-            <br><br>
 
-            <section>
+            <article>
 
-                <a href="Login.html">Click Here to Login to Portal</a>
+                <div class="announcement-icon">
+                    👤
+                </div>
 
-            </section>
+                <h4>
+                    Profile
+                </h4>
 
-        </main>
+                <p>
+                    Update your current contact details in Profile.
+                </p>
 
-        <footer>
+            </article>
 
-            <hr>
+        </section>
 
-            <p><b>Student Hub</b></p>
-            <p>Learn • Explore • Grow</p>
-            <p>&copy; 2026 Student Hub. All Rights Reserved.</p>
 
-        </footer>
+        <section class="faq-section">
 
-    </center>
+            <h2>
+                ❓ Frequently Asked Questions
+            </h2>
+
+
+            <div class="faq-controls">
+
+                <input
+                    type="text"
+                    id="faqSearch"
+                    placeholder="🔍 Search FAQ..."
+                    aria-label="Search FAQs">
+
+
+                <select
+                    id="faqSort"
+                    aria-label="Sort FAQs">
+
+                    <option value="az">
+                        A-Z
+                    </option>
+
+                    <option value="za">
+                        Z-A
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div id="faqContainer">
+
+                <p style="text-align:center;">
+                    ⏳ Loading FAQs...
+                </p>
+
+            </div>
+
+
+            <div id="faqPagination"></div>
+
+        </section>
+
+    </main>
+
+
+    <div
+        id="modalBox"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle">
+
+        <div class="modal-content">
+
+            <h2 id="modalTitle">
+                🔐 Login to Student Hub
+            </h2>
+
+            <p>
+                Are you sure you want to continue to the
+                Student Hub Login page?
+            </p>
+
+            <br>
+
+            <button
+                id="loginButton"
+                type="button">
+
+                ✓ OK
+
+            </button>
+
+
+            <button
+                id="closeModal"
+                type="button">
+
+                ✕ Cancel
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <footer>
+
+        <p>
+            <b>Student Hub</b>
+        </p>
+
+        <p>
+            Learn • Explore • Grow
+        </p>
+
+        <p>
+            &copy; 2026 Student Hub. All Rights Reserved.
+        </p>
+
+        <p>
+            Designed & developed by Heni Patel
+        </p>
+
+    </footer>
+
+
+    <script src="Home.js"></script>
 
 </body>
 

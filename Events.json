@@ -1,0 +1,77 @@
+[
+    {
+        "id": 1,
+        "name": "Coding Competition",
+        "date": "2026-08-15"
+    },
+    {
+        "id": 2,
+        "name": "Independence Day Celebration",
+        "date": "2026-08-15"
+    },
+    {
+        "id": 3,
+        "name": "Sports Day",
+        "date": "2026-08-28"
+    },
+    {
+        "id": 4,
+        "name": "Technical Workshop",
+        "date": "2026-09-05"
+    },
+    {
+        "id": 5,
+        "name": "Quiz Competition",
+        "date": "2026-09-12"
+    },
+    {
+        "id": 6,
+        "name": "Cultural Fest",
+        "date": "2026-09-20"
+    },
+    {
+        "id": 7,
+        "name": "Science Exhibition",
+        "date": "2026-09-30"
+    },
+    {
+        "id": 8,
+        "name": "Career Guidance Seminar",
+        "date": "2026-10-10"
+    },
+    {
+        "id": 9,
+        "name": "Hackathon",
+        "date": "2026-10-15"
+    },
+    {
+        "id": 10,
+        "name": "Robotics Workshop",
+        "date": "2026-10-20"
+    },
+    {
+        "id": 11,
+        "name": "Debate Competition",
+        "date": "2026-10-25"
+    },
+    {
+        "id": 12,
+        "name": "Photography Contest",
+        "date": "2026-11-05"
+    },
+    {
+        "id": 13,
+        "name": "Annual Function",
+        "date": "2026-11-15"
+    },
+    {
+        "id": 14,
+        "name": "Project Exhibition",
+        "date": "2026-11-25"
+    },
+    {
+        "id": 15,
+        "name": "Sports Tournament",
+        "date": "2026-12-05"
+    }
+]
