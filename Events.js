@@ -459,3 +459,4 @@ function createPagination(totalPages) {
     pagination.appendChild(nextButton);
 
 }
+

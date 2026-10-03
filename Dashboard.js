@@ -466,3 +466,4 @@ function createPagination(totalPages) {
     pagination.appendChild(nextButton);
 
 }
+await new Promise(r => setTimeout(r, 3000));  // 3 સેકન્ડ રાહ જુઓ
