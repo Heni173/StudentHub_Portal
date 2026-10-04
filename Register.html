@@ -735,7 +735,7 @@ body.dark .terms-checkbox{
 <p>Create your Student Hub account.</p>
 
 
-<form id="registrationForm">
+<form id="registrationForm" action="process.php" method="POST">
 
 
 <div class="form-row">
@@ -898,7 +898,7 @@ Female
 <b>Course :</b>
 </label>
 
-<select id="course">
+<select id="course" name="course">
 
 <option value="">
 Select your course
@@ -924,7 +924,7 @@ M.Tech/ME
 <b>Department :</b>
 </label>
 
-<select id="department">
+<select id="department" name="department">
 
 <option value="">
 Select
@@ -962,7 +962,7 @@ Electrical Engineering
 <b>Year :</b>
 </label>
 
-<select id="year">
+<select id="year" name="year">
 
 <option value="">
 Select your year
@@ -992,7 +992,7 @@ Select your year
 <div class="terms-row">
 
 <input type="checkbox"
-id="terms"
+id="terms" name="terms"
 class="terms-checkbox">
 
 <label for="terms" class="terms-label">
