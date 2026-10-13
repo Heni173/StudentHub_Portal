@@ -1,19 +1,15 @@
+
 <?php
 $host = "localhost";
-$dbname = "studenthub";
+$dbname = "user_registration";
 $username = "root";
 $password = "";
-try {
- $pdo = new PDO(
- 
-"mysql:host=$host;dbname=$dbname",
- $username,
- $password
- );
- echo "Database Connected 
-Successfully";
+
+$conn = new mysqli($host, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Database Connection Failed");
 }
-catch (PDOException $e) {
- echo "Connection Failed";
-}
+
+$conn->set_charset("utf8mb4");
 ?>
