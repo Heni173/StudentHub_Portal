@@ -1,3 +1,14 @@
+<?php
+require_once "timeout.php";
+
+if (strtolower(trim($_SESSION["role"] ?? "")) !== "student") {
+    http_response_code(403);
+    exit("Access Denied: Student only.");
+}
+
+$showLoginSuccess = !empty($_SESSION["login_success"]);
+unset($_SESSION["login_success"]);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -801,6 +812,39 @@ body.dark .details-table th{
 
 }
 
+
+.login-success-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 15px auto;
+    padding: 14px 20px;
+    width: calc(100% - 30px);
+    max-width: 1200px;
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.close-login-banner {
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 25px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.close-login-banner:hover {
+    opacity: 0.7;
+}
+
+
 </style>
 
 </head>
@@ -845,7 +889,7 @@ body.dark .details-table th{
         <a href="Home.html">Home</a>
 <a href="register.php">Register</a>
 
-        <a href="Dashboard.html" class="active">Dashboard</a>
+        <a href="Student_dashboard1.php" class="active">Dashboard</a>
 
         <a href="Profile.html">Profile</a>
 
@@ -862,6 +906,18 @@ body.dark .details-table th{
     </nav>
 
 </header>
+
+
+<?php if ($showLoginSuccess): ?>
+<div id="loginSuccessBanner" class="login-success-banner" role="status">
+    <span>✓ Congratulations! You are logged in successfully.</span>
+    <button type="button" id="closeLoginSuccess"
+            class="close-login-banner" aria-label="Close notification">
+        &times;
+    </button>
+</div>
+<?php endif; ?>
+
 
 
 <!-- MAIN -->
@@ -1089,6 +1145,19 @@ body.dark .details-table th{
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="Dashboard.js"></script>
+
+
+<script>
+const closeLoginSuccess = document.getElementById("closeLoginSuccess");
+const loginSuccessBanner = document.getElementById("loginSuccessBanner");
+
+if (closeLoginSuccess && loginSuccessBanner) {
+    closeLoginSuccess.addEventListener("click", function () {
+        loginSuccessBanner.remove();
+    });
+}
+</script>
+
 
 
 </body>

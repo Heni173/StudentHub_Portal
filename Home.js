@@ -145,12 +145,14 @@ if (closeModal && modalBox) {
     });
 }
 
+
 if (loginButton) {
 
     loginButton.addEventListener("click", function () {
-        window.location.href = "Login.html";
+        window.location.href = "login.php";
     });
 }
+
 
 if (modalBox) {
 

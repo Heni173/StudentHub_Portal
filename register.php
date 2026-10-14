@@ -982,7 +982,6 @@ unset($_SESSION["old"], $_SESSION["errors"]);
 
             let isValid = true;
 
-           
         
 function showError(field, message) {
     field.classList.add("error-field");
