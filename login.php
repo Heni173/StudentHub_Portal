@@ -451,13 +451,15 @@ if (isset($_SESSION["user_id"])) {
         <nav id="navigation">
             <a href="Home.html">Home</a>
             <a href="register.php">Register</a>
-            <a href="Dashboard.html">Dashboard</a>
+            <a href="Student_dashboard1.php"> Student Dashboard</a>
+            <a href="Admin.php">Admin Dashboard</a>
             <a href="Profile.html">Profile</a>
             <a href="Events.html">Events</a>
             <a href="About.html">About Us</a>
             <a href="ContactUs.html">Contact Us</a>
             <a href="Feedback.html">Feedback</a>
             <a href="Location.html">Location</a>
+            <a href="logout.php">Logout</a>
         </nav>
     </header>
 

@@ -887,9 +887,11 @@ body.dark .details-table th{
     <nav id="navigation">
 
         <a href="Home.html">Home</a>
-<a href="register.php">Register</a>
+        <a href="register.php">Register</a>
 
         <a href="Student_dashboard1.php" class="active">Dashboard</a>
+
+        <a href="Admin.php">Admin Dashboard</a>
 
         <a href="Profile.html">Profile</a>
 
@@ -902,6 +904,7 @@ body.dark .details-table th{
         <a href="Feedback.html">Feedback</a>
 
         <a href="Location.html">Location</a>
+        <a href="logout.php">Logout</a>
 
     </nav>
 

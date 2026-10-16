@@ -10,10 +10,6 @@ $showLoginSuccess = !empty($_SESSION["login_success"]);
 unset($_SESSION["login_success"]);
 ?>
 
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Pragma: no-cache");
-header("Expires: 0");
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -86,10 +82,29 @@ body.dark .login-success-banner{background:#123d2d;color:#b7f7d2;border-color:#2
     <h1>STUDENT HUB</h1>
     <button id="menuButton" type="button" aria-label="Open navigation menu">☰ Menu</button>
     <nav id="navigation">
-        <a href="Home.html">Home</a>
-        <a href="admin_dashboard.php" class="active">Admin Dashboard</a>
-        <a href="Student_dashboard.php">Student Dashboard</a>
-        <a href="logout.php">Logout</a>
+        
+            <a href="Home.html">Home</a>
+
+            <a href="register.php">Register</a>
+
+            <a href="Student_dashboard1.php"> Student Dashboard</a>
+
+            <a href="Admin.php">Admin Dashboard</a>
+
+            <a href="Profile.html">Profile</a>
+
+            <a href="Events.html">Events</a>
+
+            <a href="About.html">About Us</a>
+
+            <a href="ContactUs.html">Contact Us</a>
+
+            <a href="Feedback.html">Feedback</a>
+
+            <a href="Location.html">Location</a>
+
+            <a href="logout.php">Logout</a>
+            
     </nav>
 </header>
 

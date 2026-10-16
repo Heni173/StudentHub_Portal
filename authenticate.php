@@ -106,7 +106,8 @@ if ($role === "admin") {
     header("Location: Admin.php");
     exit();
 }
-
+else{
 header("Location: Student_dashboard1.php");
+}
 exit();
 ?>
