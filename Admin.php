@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 require_once "timeout.php";
 
 if (strtolower(trim($_SESSION["role"] ?? "")) !== "admin") {
@@ -543,6 +547,7 @@ a:focus-visible{
             </ul>
 
             <a class="action-link" href="admin_events.php">Manage Events</a>
+            <a class="action-link" href="index.html">API Event Management (Practical 13)</a>
         </article>
 
         <article class="feature-card">

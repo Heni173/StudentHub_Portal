@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical 13 - Event Management</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 25px;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h1, h2 {
+            color: #003566;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            margin-bottom: 22px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #00000015;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 3px;
+        }
+
+        .primary {
+            background: #005f73;
+            color: white;
+        }
+
+        .secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+.edit {
+    background-color: #f5e904 !important;
+    color: #222 !important;
+}
+
+.delete {
+    background-color: #ae0314 !important;
+    color: white !important;
+}
+        .message {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            display: block;
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .error {
+            display: block;
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .loading {
+            display: block;
+            background: #cff4fc;
+            color: #055160;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #003566;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Event Management System</h1>
+    <p>PHP JSON API and Fetch API CRUD</p>
+
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+
+    <div class="card">
+        <h2 id="formTitle">Add New Event</h2>
+
+        <form id="eventForm">
+            <input type="hidden" id="eventId">
+
+            <div class="form-grid">
+
+                <div>
+                    <label for="title">Event Title</label>
+                    <input type="text" id="title" maxlength="150" required>
+                </div>
+
+                <div>
+                    <label for="event_date">Event Date</label>
+                    <input type="date" id="event_date" required>
+                </div>
+
+                <div>
+                    <label for="category">Category</label>
+                    <select id="category" required>
+                        <option value="">Select Category</option>
+                        <option value="Technical">Technical</option>
+                        <option value="Cultural">Cultural</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Workshop">Workshop</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="status">Status</label>
+                    <select id="status" required>
+                        <option value="open">Open</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                </div>
+
+                <div class="full-width">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="4" required></textarea>
+                </div>
+
+                <div class="full-width">
+                    <button type="submit" class="primary" id="submitButton">
+                        Add Event
+                    </button>
+
+                    <button type="button" class="secondary"
+                            id="cancelButton" hidden>
+                        Cancel Edit
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>All Events</h2>
+
+        <button type="button" class="primary" id="refreshButton">
+            Refresh Events
+        </button>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="eventTable">
+                    <tr>
+                        <td colspan="7">Loading events...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
