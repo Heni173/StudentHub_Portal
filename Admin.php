@@ -1,3 +1,4 @@
+
 <?php
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
@@ -12,6 +13,79 @@ if (strtolower(trim($_SESSION["role"] ?? "")) !== "admin") {
 
 $showLoginSuccess = !empty($_SESSION["login_success"]);
 unset($_SESSION["login_success"]);
+
+// Connect to user_registration database
+require_once "db.php";
+
+if (!isset($conn) || !($conn instanceof mysqli)) {
+    error_log("User database connection is not available.");
+    die("User database connection failed. Please check db.php.");
+}
+
+$userConn = $conn;
+
+// Connect to studenthub database
+$dataConn = new mysqli("localhost", "root", "", "studenthub");
+
+if ($dataConn->connect_error) {
+    error_log("StudentHub database connection failed: " . $dataConn->connect_error);
+    die("StudentHub database connection failed. Please check the database.");
+}
+
+$dataConn->set_charset("utf8mb4");
+
+// Total registered user accounts
+$totalUsers = 0;
+
+$result = $userConn->query("SELECT COUNT(*) AS total FROM users");
+
+if ($result) {
+    $totalUsers = (int) $result->fetch_assoc()["total"];
+}
+
+// Total students
+$totalStudents = 0;
+
+$result = $dataConn->query("SELECT COUNT(*) AS total FROM students");
+
+if ($result) {
+    $totalStudents = (int) $result->fetch_assoc()["total"];
+}
+
+// Total events
+$totalEvents = 0;
+
+$result = $dataConn->query("SELECT COUNT(*) AS total FROM events");
+
+if ($result) {
+    $totalEvents = (int) $result->fetch_assoc()["total"];
+}
+
+// Total event registrations
+$totalRegistrations = 0;
+
+$result = $dataConn->query("SELECT COUNT(*) AS total FROM registrations");
+
+if ($result) {
+    $totalRegistrations = (int) $result->fetch_assoc()["total"];
+}
+
+// Latest registrations
+$latestRegistrations = $dataConn->query(
+    "SELECT
+        r.registration_id,
+        r.student_id,
+        r.event_id,
+        s.name AS student_name,
+        e.event_name
+    FROM registrations r
+    LEFT JOIN students s
+        ON r.student_id = s.student_id
+    LEFT JOIN events e
+        ON r.event_id = e.event_id
+    ORDER BY r.registration_id DESC
+    LIMIT 5"
+);
 ?>
 
 <!DOCTYPE html>
@@ -22,431 +96,584 @@ unset($_SESSION["login_success"]);
 <title>Student Hub - Admin Dashboard</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-
-body{
-    background:linear-gradient(135deg,#F8FAFC,#EAF4F8);
-    color:#2E2E2E;
-    transition:background .4s,color .4s;
-    min-height:100vh;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#notification{
-    background:#005F73;
-    color:white;
-    padding:12px;
-    text-align:center;
-    font-weight:bold;
+body {
+    background: linear-gradient(135deg, #F8FAFC, #EAF4F8);
+    color: #2E2E2E;
+    transition: background .4s, color .4s;
+    min-height: 100vh;
 }
 
-#closeNotification{
-    margin-left:15px;
-    border:none;
-    padding:5px 10px;
-    border-radius:15px;
-    cursor:pointer;
-    transition:.3s;
+#notification {
+    background: #005F73;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
 }
 
-#closeNotification:hover{transform:scale(1.1)}
-
-header{
-    position:relative;
-    background:linear-gradient(135deg,#002147,#4dc8e0);
-    color:white;
-    text-align:center;
-    padding:35px 20px;
-    box-shadow:0 8px 20px rgba(0,0,0,.18);
+#closeNotification {
+    margin-left: 15px;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: .3s;
 }
 
-header img.logo{
-    width:180px;
-    height:180px;
-    object-fit:cover;
-    border-radius:50%;
-    border:5px solid #0d0000;
-    padding:6px;
-    background:white;
-    box-shadow:0 10px 25px rgba(0,0,0,.25);
-    transition:.4s;
+#closeNotification:hover {
+    transform: scale(1.1);
 }
 
-header img.logo:hover{transform:scale(1.08)}
-
-header h1{
-    margin:18px 0;
-    font-size:38px;
-    letter-spacing:2px;
+header {
+    position: relative;
+    background: linear-gradient(135deg, #002147, #4dc8e0);
+    color: white;
+    text-align: center;
+    padding: 35px 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.18);
 }
 
-#themeButton{
-    position:absolute;
-    top:18px;
-    right:25px;
-    width:42px;
-    height:42px;
-    border:none;
-    border-radius:50%;
-    background:white;
-    color:#002147;
-    font-size:20px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-    box-shadow:0 4px 10px rgba(0,0,0,.2);
-    transition:.3s;
+header img.logo {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid #0d0000;
+    padding: 6px;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,.25);
+    transition: .4s;
 }
 
-#themeButton:hover{transform:scale(1.1)}
-
-#menuButton{
-    display:none;
-    background:white;
-    color:#002147;
-    border:none;
-    padding:10px 20px;
-    border-radius:25px;
-    font-weight:bold;
-    cursor:pointer;
-    transition:.3s;
+header img.logo:hover {
+    transform: scale(1.08);
 }
 
-#menuButton:hover{transform:scale(1.05)}
-
-nav{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:14px;
-    margin-top:15px;
+header h1 {
+    margin: 18px 0;
+    font-size: 38px;
+    letter-spacing: 2px;
 }
 
-nav a{
-    text-decoration:none;
-    color:white;
-    background:rgba(255,255,255,.15);
-    padding:10px 20px;
-    border-radius:30px;
-    font-weight:600;
-    transition:.3s;
+#themeButton {
+    position: absolute;
+    top: 18px;
+    right: 25px;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    color: #002147;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,.2);
+    transition: .3s;
 }
 
-nav a:hover,nav a.active{
-    background:white;
-    color:#002147;
-    transform:translateY(-3px);
+#themeButton:hover {
+    transform: scale(1.1);
 }
 
-main{
-    width:90%;
-    max-width:1500px;
-    margin:auto;
-    padding:35px 0 45px;
+#menuButton {
+    display: none;
+    background: white;
+    color: #002147;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
 }
 
-.login-success-banner{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    margin:15px auto;
-    padding:14px 20px;
-    width:90%;
-    max-width:1500px;
-    background:#d1fae5;
-    color:#065f46;
-    border:1px solid #a7f3d0;
-    border-radius:8px;
-    font-weight:600;
+#menuButton:hover {
+    transform: scale(1.05);
 }
 
-.close-login-banner{
-    border:none;
-    background:transparent;
-    color:inherit;
-    font-size:25px;
-    line-height:1;
-    cursor:pointer;
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 15px;
 }
 
-.page-heading{
-    text-align:center;
-    color:#002147;
-    font-size:30px;
-    margin-bottom:10px;
+nav a {
+    text-decoration: none;
+    color: white;
+    background: rgba(255,255,255,.15);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: .3s;
 }
 
-.welcome-text{
-    text-align:center;
-    font-size:17px;
-    margin-bottom:30px;
-    line-height:1.6;
+nav a:hover,
+nav a.active {
+    background: white;
+    color: #002147;
+    transform: translateY(-3px);
 }
 
-.summary-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:20px;
-    margin-bottom:35px;
+main {
+    width: 90%;
+    max-width: 1500px;
+    margin: auto;
+    padding: 35px 0 45px;
 }
 
-.summary-card{
-    background:white;
-    border-radius:16px;
-    padding:22px;
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
-    border-top:5px solid #005F73;
-    transition:.3s;
+.login-success-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 15px auto;
+    padding: 14px 20px;
+    width: 90%;
+    max-width: 1500px;
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+    border-radius: 8px;
+    font-weight: 600;
 }
 
-.summary-card:hover{transform:translateY(-5px)}
-
-.summary-card .icon{
-    width:52px;
-    height:52px;
-    border-radius:50%;
-    background:#EAF4F8;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:25px;
-    margin-bottom:14px;
+.close-login-banner {
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 25px;
+    line-height: 1;
+    cursor: pointer;
 }
 
-.summary-card h3{
-    font-size:18px;
-    color:#002147;
-    margin-bottom:8px;
+.page-heading {
+    text-align: center;
+    color: #002147;
+    font-size: 30px;
+    margin-bottom: 10px;
 }
 
-.summary-card p{line-height:1.6}
-
-.section-title{
-    text-align:center;
-    color:#002147;
-    font-size:28px;
-    margin:35px 0 22px;
+.welcome-text {
+    text-align: center;
+    font-size: 17px;
+    margin-bottom: 30px;
+    line-height: 1.6;
 }
 
-.feature-grid{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:22px;
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 35px;
 }
 
-.feature-card{
-    background:white;
-    border-top:5px solid #005F73;
-    border-radius:16px;
-    padding:25px;
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
-    transition:.3s;
-    min-width:0;
+.summary-card {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+    border-top: 5px solid #005F73;
+    transition: .3s;
 }
 
-.feature-card:hover{
-    background:#F2FBFC;
-    transform:translateY(-5px);
+.summary-card:hover {
+    transform: translateY(-5px);
 }
 
-.feature-card h3{
-    font-size:22px;
-    color:#002147;
-    margin-bottom:12px;
+.summary-card .icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #EAF4F8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    margin-bottom: 14px;
 }
 
-.feature-card p{
-    line-height:1.7;
-    margin-bottom:12px;
+.summary-card h3 {
+    font-size: 18px;
+    color: #002147;
+    margin-bottom: 8px;
 }
 
-.feature-card ul{
-    padding-left:22px;
-    line-height:1.9;
+.summary-card p {
+    line-height: 1.6;
 }
 
-.feature-card .feature-icon{
-    font-size:30px;
-    margin-bottom:12px;
+.section-title {
+    text-align: center;
+    color: #002147;
+    font-size: 28px;
+    margin: 35px 0 22px;
 }
 
-.action-link{
-    display:inline-block;
-    margin-top:15px;
-    text-decoration:none;
-    color:white;
-    background:linear-gradient(135deg,#002147,#005F73);
-    padding:10px 22px;
-    border-radius:25px;
-    font-weight:600;
-    transition:.3s;
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
 }
 
-.action-link:hover{
-    transform:scale(1.04);
-    color:white;
+.feature-card {
+    background: white;
+    border-top: 5px solid #005F73;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+    transition: .3s;
+    min-width: 0;
 }
 
-.quick-notice{
-    margin-top:30px;
-    background:white;
-    border-left:5px solid #005F73;
-    border-radius:12px;
-    padding:22px;
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
+.feature-card:hover {
+    background: #F2FBFC;
+    transform: translateY(-5px);
 }
 
-.quick-notice h3{
-    color:#002147;
-    margin-bottom:10px;
+.feature-card h3 {
+    font-size: 22px;
+    color: #002147;
+    margin-bottom: 12px;
 }
 
-.quick-notice p{line-height:1.7}
-
-footer{
-    background:linear-gradient(135deg,#002147,#4dc8e0);
-    color:white;
-    text-align:center;
-    padding:22px;
-    margin-top:20px;
+.feature-card p {
+    line-height: 1.7;
+    margin-bottom: 12px;
 }
 
-footer p{margin:6px 0}
+.feature-card ul {
+    padding-left: 22px;
+    line-height: 1.9;
+}
+
+.feature-card .feature-icon {
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+.action-link {
+    display: inline-block;
+    margin-top: 15px;
+    text-decoration: none;
+    color: white;
+    background: linear-gradient(135deg, #002147, #005F73);
+    padding: 10px 22px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.action-link:hover {
+    transform: scale(1.04);
+    color: white;
+}
+
+.quick-notice {
+    margin-top: 30px;
+    background: white;
+    border-left: 5px solid #005F73;
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+}
+
+.quick-notice h3 {
+    color: #002147;
+    margin-bottom: 10px;
+}
+
+.quick-notice p {
+    line-height: 1.7;
+}
+
+footer {
+    background: linear-gradient(135deg, #002147, #4dc8e0);
+    color: white;
+    text-align: center;
+    padding: 22px;
+    margin-top: 20px;
+}
+
+footer p {
+    margin: 6px 0;
+}
 
 /* Dark Mode */
 
-body.dark{
-    background:linear-gradient(135deg,#121820,#202a35);
-    color:#f1f5f9;
+body.dark {
+    background: linear-gradient(135deg, #121820, #202a35);
+    color: #f1f5f9;
 }
 
 body.dark .summary-card,
 body.dark .feature-card,
-body.dark .quick-notice{
-    background:#222b35;
-    color:#f1f5f9;
+body.dark .quick-notice {
+    background: #222b35;
+    color: #f1f5f9;
 }
 
 body.dark .summary-card h3,
 body.dark .feature-card h3,
 body.dark .section-title,
 body.dark .page-heading,
-body.dark .quick-notice h3{
-    color:#4dc8e0;
+body.dark .quick-notice h3 {
+    color: #4dc8e0;
 }
 
-body.dark .summary-card .icon{
-    background:#333e4b;
+body.dark .summary-card .icon {
+    background: #333e4b;
 }
 
-body.dark .feature-card:hover{
-    background:#2b3642;
+body.dark .feature-card:hover {
+    background: #2b3642;
 }
 
-body.dark #themeButton{
-    background:#222;
-    color:#4dc8e0;
+body.dark #themeButton {
+    background: #222;
+    color: #4dc8e0;
 }
 
-body.dark .login-success-banner{
-    background:#123d2d;
-    color:#b7f7d2;
-    border-color:#226747;
+body.dark .login-success-banner {
+    background: #123d2d;
+    color: #b7f7d2;
+    border-color: #226747;
+}
+
+/* Latest Registrations Table */
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    margin: 0 auto 35px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+}
+
+.table-responsive table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0;
+    background: white;
+    color: #2E2E2E;
+}
+
+.table-responsive table thead th {
+    background: linear-gradient(135deg, #002147, #005F73);
+    color: white;
+    padding: 15px 18px;
+    text-align: left;
+    font-size: 15px;
+    border: 1px solid #d6e3eb;
+    white-space: nowrap;
+}
+
+.table-responsive table tbody td {
+    padding: 13px 18px;
+    border: 1px solid #d6e3eb;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+.table-responsive table tbody tr:nth-child(even) {
+    background: #EAF4F8;
+}
+
+.table-responsive table tbody tr:nth-child(odd) {
+    background: #FFFFFF;
+}
+
+.table-responsive table tbody tr:hover {
+    background: #d7f0f5;
+}
+
+body.dark .table-responsive,
+body.dark .table-responsive table {
+    background: #222b35;
+    color: #f1f5f9;
+}
+
+body.dark .table-responsive table tbody tr:nth-child(even),
+body.dark .table-responsive table tbody tr:nth-child(odd) {
+    background: #222b35;
+    color: #f1f5f9;
+}
+
+body.dark .table-responsive table tbody tr:hover {
+    background: #333e4b;
+}
+
+body.dark .table-responsive table thead th {
+    background: linear-gradient(135deg, #002147, #005F73);
+    color: white;
+}
+
+body.dark .table-responsive table th,
+body.dark .table-responsive table td {
+    border-color: #465363;
 }
 
 /* Tablet */
 
-@media(max-width:1100px){
-    .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-    nav{gap:10px}
-    nav a{padding:9px 14px}
+@media(max-width: 1100px) {
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    nav {
+        gap: 10px;
+    }
+
+    nav a {
+        padding: 9px 14px;
+    }
 }
 
 /* Mobile Navigation */
 
-@media(max-width:768px){
-    header{padding:25px 15px}
-    header img.logo{width:140px;height:140px}
-    header h1{font-size:30px}
-
-    #menuButton{
-        display:inline-block;
-        margin-top:5px;
+@media(max-width: 768px) {
+    header {
+        padding: 25px 15px;
     }
 
-    nav{
-        display:none;
-        flex-direction:column;
-        align-items:stretch;
-        gap:10px;
-        margin-top:15px;
-        width:100%;
+    header img.logo {
+        width: 140px;
+        height: 140px;
     }
 
-    nav.show{display:flex}
-
-    nav a{
-        width:100%;
-        max-width:350px;
-        margin:0 auto;
-        text-align:center;
+    header h1 {
+        font-size: 30px;
     }
 
-    main{
-        width:95%;
-        padding:25px 0 35px;
+    #menuButton {
+        display: inline-block;
+        margin-top: 5px;
     }
 
-    #themeButton{
-        top:15px;
-        right:15px;
-        width:38px;
-        height:38px;
-        font-size:18px;
+    nav {
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin-top: 15px;
+        width: 100%;
     }
 
-    .feature-grid{grid-template-columns:1fr}
+    nav.show {
+        display: flex;
+    }
 
-    .section-title{font-size:25px}
+    nav a {
+        width: 100%;
+        max-width: 350px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    main {
+        width: 95%;
+        padding: 25px 0 35px;
+    }
+
+    #themeButton {
+        top: 15px;
+        right: 15px;
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+    }
+
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-title {
+        font-size: 25px;
+    }
 }
 
 /* Small Mobile */
 
-@media(max-width:520px){
-    header img.logo{width:110px;height:110px}
-    header h1{font-size:25px;letter-spacing:1px}
-
-    .summary-grid{grid-template-columns:1fr}
-
-    .page-heading{font-size:24px}
-    .section-title{font-size:23px}
-
-    .welcome-text{font-size:15px}
-
-    .feature-card{padding:20px}
-    .feature-card h3{font-size:20px}
-
-    .summary-card{padding:20px}
-
-    .login-success-banner{
-        width:95%;
-        font-size:14px;
-        padding:12px;
+@media(max-width: 520px) {
+    header img.logo {
+        width: 110px;
+        height: 110px;
     }
 
-    .quick-notice{padding:17px}
+    header h1 {
+        font-size: 25px;
+        letter-spacing: 1px;
+    }
 
-    footer{font-size:14px}
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-heading {
+        font-size: 24px;
+    }
+
+    .section-title {
+        font-size: 23px;
+    }
+
+    .welcome-text {
+        font-size: 15px;
+    }
+
+    .feature-card {
+        padding: 20px;
+    }
+
+    .feature-card h3 {
+        font-size: 20px;
+    }
+
+    .summary-card {
+        padding: 20px;
+    }
+
+    .login-success-banner {
+        width: 95%;
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .quick-notice {
+        padding: 17px;
+    }
+
+    footer {
+        font-size: 14px;
+    }
+
+    .table-responsive table thead th,
+    .table-responsive table tbody td {
+        padding: 10px;
+        font-size: 13px;
+    }
 }
 
 /* Accessibility */
 
 button:focus-visible,
-a:focus-visible{
-    outline:3px solid #4dc8e0;
-    outline-offset:3px;
+a:focus-visible {
+    outline: 3px solid #4dc8e0;
+    outline-offset: 3px;
 }
 </style>
 </head>
@@ -461,7 +688,8 @@ a:focus-visible{
 
 <header>
     <button id="themeButton" type="button"
-            title="Change theme" aria-label="Switch to dark mode">🌙</button>
+            title="Change theme"
+            aria-label="Switch to dark mode">🌙</button>
 
     <img class="logo" src="logo.jpeg" alt="Student Hub Logo">
 
@@ -504,6 +732,78 @@ a:focus-visible{
         and important notices from one place.
     </p>
 
+    <h2 class="section-title">Latest Registrations</h2>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Registration ID</th>
+                    <th>Student Name</th>
+                    <th>Event Name</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            <?php if ($latestRegistrations && $latestRegistrations->num_rows > 0): ?>
+                <?php while ($row = $latestRegistrations->fetch_assoc()): ?>
+                <tr>
+                    <td><?= (int) $row["registration_id"] ?></td>
+                    <td>
+                        <?= htmlspecialchars(
+                            $row["student_name"] ?? "Unknown",
+                            ENT_QUOTES,
+                            "UTF-8"
+                        ) ?>
+                    </td>
+                    <td>
+                        <?= htmlspecialchars(
+                            $row["event_name"] ?? "Unknown",
+                            ENT_QUOTES,
+                            "UTF-8"
+                        ) ?>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="3" style="text-align:center;">
+                        No registrations found.
+                    </td>
+                </tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="section-title">Dashboard Statistics</h2>
+
+    <section class="summary-grid">
+        <article class="summary-card">
+            <div class="icon">👥</div>
+            <h3>Total Users</h3>
+            <p><strong><?= $totalUsers ?></strong> registered accounts</p>
+        </article>
+
+        <article class="summary-card">
+            <div class="icon">🎓</div>
+            <h3>Total Students</h3>
+            <p><strong><?= $totalStudents ?></strong> student records</p>
+        </article>
+
+        <article class="summary-card">
+            <div class="icon">🎉</div>
+            <h3>Total Events</h3>
+            <p><strong><?= $totalEvents ?></strong> college events</p>
+        </article>
+
+        <article class="summary-card">
+            <div class="icon">📝</div>
+            <h3>Total Registrations</h3>
+            <p><strong><?= $totalRegistrations ?></strong> event registrations</p>
+        </article>
+    </section>
+
     <section class="summary-grid">
         <article class="summary-card">
             <div class="icon">👨‍🎓</div>
@@ -534,7 +834,6 @@ a:focus-visible{
 
     <section class="feature-grid">
 
-        <!-- Event Management:-->
         <article class="feature-card">
             <div class="feature-icon">🎉</div>
             <h3>Event Management</h3>
@@ -547,7 +846,7 @@ a:focus-visible{
             </ul>
 
             <a class="action-link" href="admin_events.php">Manage Events</a>
-            <a class="action-link" href="index.html">API Event Management (Practical 13)</a>
+            <a class="action-link" href="index.html">API Event Management</a>
         </article>
 
         <article class="feature-card">
@@ -592,6 +891,20 @@ a:focus-visible{
             <a class="action-link" href="announcements.php">Manage Notices</a>
         </article>
 
+        <article class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h3>Audit Logs</h3>
+            <p>View records of important admin activities and actions.</p>
+
+            <ul>
+                <li>Track admin actions</li>
+                <li>Review activity history</li>
+                <li>Monitor important changes</li>
+            </ul>
+
+            <a class="action-link" href="audit_logs.php">View Audit Logs</a>
+        </article>
+
     </section>
 
     <section class="quick-notice">
@@ -614,22 +927,18 @@ a:focus-visible{
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    // Notification banner
     const notification = document.getElementById("notification");
     const closeNotification = document.getElementById("closeNotification");
 
-    // Theme button
     const themeButton = document.getElementById("themeButton");
 
-    // Hamburger menu
     const menuButton = document.getElementById("menuButton");
     const navigation = document.getElementById("navigation");
 
-    // Login success message
     const loginSuccessBanner = document.getElementById("loginSuccessBanner");
     const closeLoginSuccess = document.getElementById("closeLoginSuccess");
 
-    // Restore saved theme from localStorage
+    // Read saved theme from Local Storage
     let savedTheme = "light";
 
     try {
@@ -655,7 +964,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     applyTheme(savedTheme);
 
-    // Toggle dark and light mode
+    // Toggle Light/Dark Mode and save preference
     themeButton.addEventListener("click", function () {
         const newTheme = document.body.classList.contains("dark")
             ? "light"
@@ -666,44 +975,49 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             localStorage.setItem("theme", newTheme);
         } catch (error) {
-            // Theme still works if localStorage is unavailable
+            // Theme still works if Local Storage is unavailable
         }
     });
 
-    // Restore notification visibility
+    // Restore notification state
     try {
         if (localStorage.getItem("notificationClosed") === "true") {
             notification.style.display = "none";
         }
     } catch (error) {
-        // Notification remains usable without localStorage
+        // Notification remains visible if Local Storage is unavailable
     }
 
-    // Close notification and remember the choice
+    // Close notification and save preference
     closeNotification.addEventListener("click", function () {
         notification.style.display = "none";
 
         try {
             localStorage.setItem("notificationClosed", "true");
         } catch (error) {
-            // Closing still works if localStorage is unavailable
+            // Closing still works if Local Storage is unavailable
         }
     });
 
-    // Hamburger menu open/close
+    // Hamburger menu
     menuButton.addEventListener("click", function () {
         const isOpen = navigation.classList.toggle("show");
 
         menuButton.setAttribute("aria-expanded", String(isOpen));
+        menuButton.setAttribute(
+            "aria-label",
+            isOpen ? "Close navigation menu" : "Open navigation menu"
+        );
 
         menuButton.textContent = isOpen ? "✕ Close Menu" : "☰ Menu";
     });
 
-    // Close mobile menu after clicking a navigation link
+    // Close mobile menu after selecting a navigation link
     navigation.querySelectorAll("a").forEach(function (link) {
         link.addEventListener("click", function () {
             navigation.classList.remove("show");
             menuButton.setAttribute("aria-expanded", "false");
+            menuButton.setAttribute("aria-label", "Open navigation menu");
             menuButton.textContent = "☰ Menu";
         });
     });

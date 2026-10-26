@@ -102,6 +102,15 @@ $_SESSION["role"] = $role;
 $_SESSION["last_activity"] = time();
 $_SESSION["login_success"] = true;
 
+require_once "audit_log.php";
+
+writeAuditLog(
+    (int)$user["id"],
+    $user["username"],
+    "LOGIN",
+    "User logged in successfully."
+);
+
 if ($role === "admin") {
     header("Location: Admin.php");
     exit();

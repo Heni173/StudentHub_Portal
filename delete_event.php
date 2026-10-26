@@ -39,10 +39,12 @@ if (!isset($_POST["event_id"]) || !ctype_digit($_POST["event_id"])) {
     exit();
 }
 
-$eventId = (int) $_POST["event_id"];
+$eventId = (int)$_POST["event_id"];
 
-// Find the event and its poster
-$stmt = $conn->prepare("SELECT poster FROM events WHERE event_id = ?");
+// Find the event title and poster before deleting
+$stmt = $conn->prepare(
+    "SELECT title, poster FROM events WHERE event_id = ?"
+);
 $stmt->bind_param("i", $eventId);
 $stmt->execute();
 
@@ -56,12 +58,51 @@ if (!$event) {
     exit();
 }
 
-// Delete the event from the database
+// Delete the event from the events database
 $stmt = $conn->prepare("DELETE FROM events WHERE event_id = ?");
 $stmt->bind_param("i", $eventId);
 
 if ($stmt->execute() && $stmt->affected_rows > 0) {
     $stmt->close();
+
+    // Record the successful deletion in user_registration.audit_logs
+    require_once "db.php";
+
+    $userId = (int)($_SESSION["user_id"] ?? 0);
+    $username = trim(
+        $_SESSION["username"] ??
+        $_SESSION["email"] ??
+        "admin"
+    );
+    $action = "DELETE_EVENT";
+    $details = "Event deleted: " . $event["title"] .
+               " (Event ID: " . $eventId . ")";
+
+    $logStmt = $conn->prepare(
+        "INSERT INTO audit_logs
+         (user_id, username, action, details, created_at)
+         VALUES (?, ?, ?, ?, NOW())"
+    );
+
+    if ($logStmt) {
+        $logStmt->bind_param(
+            "isss",
+            $userId,
+            $username,
+            $action,
+            $details
+        );
+
+        if (!$logStmt->execute()) {
+            error_log("DELETE_EVENT audit log failed: " . $logStmt->error);
+        }
+
+        $logStmt->close();
+    } else {
+        error_log("DELETE_EVENT audit log prepare failed: " . $conn->error);
+    }
+
+    $conn->close();
 
     // Delete the poster image, if one exists
     if (!empty($event["poster"])) {

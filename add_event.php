@@ -126,15 +126,51 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $status
             );
 
-            if ($stmt->execute()) {
-                $stmt->close();
+            
+if ($stmt->execute()) {
+    $eventId = $conn->insert_id;
+    $stmt->close();
 
-                $_SESSION["event_message"] = "Event added successfully!";
-                $_SESSION["event_message_type"] = "success";
+    // Connect to the database containing audit_logs
+    require_once "db.php";
 
-                header("Location: admin_events.php");
-                exit();
-            } else {
+    $userId = (int)($_SESSION["user_id"] ?? 0);
+    $username = trim($_SESSION["username"] ?? $_SESSION["email"] ?? "admin");
+    $action = "ADD_EVENT";
+    $details = "New event added: " . $title;
+
+    $logStmt = $conn->prepare(
+        "INSERT INTO audit_logs (user_id, username, action, details, created_at)
+         VALUES (?, ?, ?, ?, NOW())"
+    );
+
+    if ($logStmt) {
+        $logStmt->bind_param(
+            "isss",
+            $userId,
+            $username,
+            $action,
+            $details
+        );
+
+        if (!$logStmt->execute()) {
+            error_log("Audit log insert failed: " . $logStmt->error);
+        }
+
+        $logStmt->close();
+    } else {
+        error_log("Audit log prepare failed: " . $conn->error);
+    }
+
+    $conn->close();
+
+    $_SESSION["event_message"] = "Event added successfully!";
+    $_SESSION["event_message_type"] = "success";
+
+    header("Location: admin_events.php");
+    exit();
+}
+else {
                 if ($uploadedPath !== null && is_file($uploadedPath)) {
                     unlink($uploadedPath);
                 }
