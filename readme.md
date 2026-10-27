@@ -512,53 +512,53 @@ Recommended screenshots for the final practical report:
    
 **9. Student attempting to access an Admin page and being denied.**
 
-    <img width="838" height="229" alt="image" src="https://github.com/user-attachments/assets/66a78d56-b08d-4236-81e7-261ad83492ca" />
+  <img width="838" height="229" alt="image" src="https://github.com/user-attachments/assets/66a78d56-b08d-4236-81e7-261ad83492ca"/>
     
 **10. Admin attempting to access a student-only page and being denied.**
 
-    <img width="853" height="190" alt="image" src="https://github.com/user-attachments/assets/be5b132a-3316-47c2-b894-8e97f1282a47" />
+  <img width="853" height="190" alt="image" src="https://github.com/user-attachments/assets/be5b132a-3316-47c2-b894-8e97f1282a47" />
 
 **11. Event management page.**
 
-    <img width="1917" height="903" alt="image" src="https://github.com/user-attachments/assets/b843c18c-6772-4e24-9eca-69313dbaffec" />
+  <img width="1917" height="903" alt="image" src="https://github.com/user-attachments/assets/b843c18c-6772-4e24-9eca-69313dbaffec" />
     
-    <img width="1911" height="908" alt="image" src="https://github.com/user-attachments/assets/8d582a40-091a-4f0f-9670-ee966e4b8275" />
+  <img width="1911" height="908" alt="image" src="https://github.com/user-attachments/assets/8d582a40-091a-4f0f-9670-ee966e4b8275" />
 
 **12. Feedback submission and administrative review.**
 
-    <img width="1905" height="817" alt="image" src="https://github.com/user-attachments/assets/ff9c7c7c-3419-4c56-aa20-450e85319281" />
+  <img width="1905" height="817" alt="image" src="https://github.com/user-attachments/assets/ff9c7c7c-3419-4c56-aa20-450e85319281" />
 
-    <img width="1907" height="908" alt="image" src="https://github.com/user-attachments/assets/5e022f43-7263-4e9c-a342-e8b415d5e44a" />
+  <img width="1907" height="908" alt="image" src="https://github.com/user-attachments/assets/5e022f43-7263-4e9c-a342-e8b415d5e44a" />
   
 **13. Audit logs, where applicable.**
 
-    <img width="1907" height="885" alt="image" src="https://github.com/user-attachments/assets/d728f427-6921-4866-a4cb-f1c9f12dcefc" />
+  <img width="1907" height="885" alt="image" src="https://github.com/user-attachments/assets/d728f427-6921-4866-a4cb-f1c9f12dcefc" />
 
 **14. Databases and tables in phpMyAdmin.**
 
-    <img width="1917" height="693" alt="image" src="https://github.com/user-attachments/assets/94a4e5ea-42d1-471b-841f-200b6a253894" />
+  <img width="1917" height="693" alt="image" src="https://github.com/user-attachments/assets/94a4e5ea-42d1-471b-841f-200b6a253894" />
     
-    <img width="1911" height="682" alt="image" src="https://github.com/user-attachments/assets/a8789531-6416-4105-bb83-eb0b5a564276" />
+  <img width="1911" height="682" alt="image" src="https://github.com/user-attachments/assets/a8789531-6416-4105-bb83-eb0b5a564276" />
     
-    <img width="1917" height="925" alt="image" src="https://github.com/user-attachments/assets/dfb699b0-af02-400d-9747-51e5f20f6906" />
+  <img width="1917" height="925" alt="image" src="https://github.com/user-attachments/assets/dfb699b0-af02-400d-9747-51e5f20f6906" />
     
-    <img width="1917" height="692" alt="image" src="https://github.com/user-attachments/assets/54ed2018-7c15-4382-a99e-c1ef0b90a596" />
+  <img width="1917" height="692" alt="image" src="https://github.com/user-attachments/assets/54ed2018-7c15-4382-a99e-c1ef0b90a596" />
     
-    <img width="1913" height="697" alt="image" src="https://github.com/user-attachments/assets/44203eb2-a767-4961-ba1a-8b79d8183dd1" />
+  <img width="1913" height="697" alt="image" src="https://github.com/user-attachments/assets/44203eb2-a767-4961-ba1a-8b79d8183dd1" />
     
-    <img width="1917" height="702" alt="image" src="https://github.com/user-attachments/assets/6e7c3dcc-5a06-49db-af61-c254fee2726d" />
+  <img width="1917" height="702" alt="image" src="https://github.com/user-attachments/assets/6e7c3dcc-5a06-49db-af61-c254fee2726d" />
     
-    <img width="1917" height="927" alt="image" src="https://github.com/user-attachments/assets/590089b7-6758-406e-bf7c-22644c71a26c" />
+  <img width="1917" height="927" alt="image" src="https://github.com/user-attachments/assets/590089b7-6758-406e-bf7c-22644c71a26c" />
     
-    <img width="1913" height="688" alt="image" src="https://github.com/user-attachments/assets/2d8b8da9-754b-48c4-9304-3db4584f80a6" />
+  <img width="1913" height="688" alt="image" src="https://github.com/user-attachments/assets/2d8b8da9-754b-48c4-9304-3db4584f80a6" />
     
-    <img width="1915" height="692" alt="image" src="https://github.com/user-attachments/assets/ef908068-27a3-46db-a2c6-ddce795dea62" />
+  <img width="1915" height="692" alt="image" src="https://github.com/user-attachments/assets/ef908068-27a3-46db-a2c6-ddce795dea62" />
     
-    <img width="1917" height="710" alt="image" src="https://github.com/user-attachments/assets/3e484768-e2b2-4ff1-ae30-bc5f9e302536" />
+  <img width="1917" height="710" alt="image" src="https://github.com/user-attachments/assets/3e484768-e2b2-4ff1-ae30-bc5f9e302536" />
     
-    <img width="1917" height="685" alt="image" src="https://github.com/user-attachments/assets/91c19d0b-c479-46e7-b0f3-3959392a23a1" />
+  <img width="1917" height="685" alt="image" src="https://github.com/user-attachments/assets/91c19d0b-c479-46e7-b0f3-3959392a23a1" />
     
-    <img width="1917" height="707" alt="image" src="https://github.com/user-attachments/assets/914ca118-52c7-4503-ab78-e4b61d527240" />
+  <img width="1917" height="707" alt="image" src="https://github.com/user-attachments/assets/914ca118-52c7-4503-ab78-e4b61d527240" />
 
 
 ---
