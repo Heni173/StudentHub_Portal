@@ -333,7 +333,7 @@ Before running the project, ensure that the following are available:
 Clone the repository:
 
 ```bash
-git clone 
+git clone https://github.com/Heni173/StudentHub_Portal
 ```
 
 Alternatively, download the repository as a ZIP file and extract it.
