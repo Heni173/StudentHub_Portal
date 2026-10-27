@@ -634,12 +634,11 @@ unset($_SESSION["old"], $_SESSION["errors"]);
         <button id="menuButton" type="button">☰ Menu</button>
 
         <nav id="navigation">
-            <a href="Home.html">Home</a>
+            <a href="Home.php">Home</a>
             <a href="register.php" class="active">Register</a>
-            <a href="Student_dashboard1.php"> Student Dashboard</a>
-            <a href="Admin.php">Admin Dashboard</a>
-            <a href="Profile.html">Profile</a>
-            <a href="Events.html">Events</a>
+            <a href="Student_dashboard1.php">Dashboard</a>
+            <a href="Profile.php">Profile</a>
+            <a href="Events.php">Events</a>
             <a href="About.html">About Us</a>
             <a href="ContactUs.html">Contact Us</a>
             <a href="Feedback.html">Feedback</a>
@@ -916,7 +915,7 @@ unset($_SESSION["old"], $_SESSION["errors"]);
         </section>
 
         <section class="login-link">
-            <p>Already have an account? <a href="Login.html">Login Here</a></p>
+            <p>Already have an account? <a href="login.php">Login Here</a></p>
         </section>
     </main>
 

@@ -1,4 +1,3 @@
-
 <?php
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
@@ -37,37 +36,59 @@ $dataConn->set_charset("utf8mb4");
 // Total registered user accounts
 $totalUsers = 0;
 
-$result = $userConn->query("SELECT COUNT(*) AS total FROM users");
+$result = $userConn->query(
+    "SELECT COUNT(*) AS total FROM users"
+);
 
 if ($result) {
     $totalUsers = (int) $result->fetch_assoc()["total"];
+} else {
+    error_log("User count query failed: " . $userConn->error);
 }
 
-// Total students
+// Total active students
 $totalStudents = 0;
 
-$result = $dataConn->query("SELECT COUNT(*) AS total FROM students");
+$result = $dataConn->query(
+    "SELECT COUNT(*) AS total
+     FROM students
+     WHERE status = 'active'"
+);
 
 if ($result) {
     $totalStudents = (int) $result->fetch_assoc()["total"];
+} else {
+    error_log("Student count query failed: " . $dataConn->error);
 }
 
-// Total events
+// Total events from studenthub database
 $totalEvents = 0;
 
-$result = $dataConn->query("SELECT COUNT(*) AS total FROM events");
+if (isset($dataConn) && $dataConn instanceof mysqli) {
+    $result = $dataConn->query(
+        "SELECT COUNT(*) AS total FROM events"
+    );
 
-if ($result) {
-    $totalEvents = (int) $result->fetch_assoc()["total"];
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $totalEvents = (int) $row["total"];
+        $result->free();
+    } else {
+        error_log("Total events query failed: " . $dataConn->error);
+    }
 }
 
 // Total event registrations
 $totalRegistrations = 0;
 
-$result = $dataConn->query("SELECT COUNT(*) AS total FROM registrations");
+$result = $dataConn->query(
+    "SELECT COUNT(*) AS total FROM registrations"
+);
 
 if ($result) {
     $totalRegistrations = (int) $result->fetch_assoc()["total"];
+} else {
+    error_log("Registration count query failed: " . $dataConn->error);
 }
 
 // Latest registrations
@@ -86,6 +107,10 @@ $latestRegistrations = $dataConn->query(
     ORDER BY r.registration_id DESC
     LIMIT 5"
 );
+
+if (!$latestRegistrations) {
+    error_log("Latest registrations query failed: " . $dataConn->error);
+}
 ?>
 
 <!DOCTYPE html>
@@ -700,17 +725,15 @@ a:focus-visible {
             aria-expanded="false"
             aria-controls="navigation">☰ Menu</button>
 
+    <!-- Admin navigation: only admin-related pages -->
     <nav id="navigation">
-        <a href="Home.html">Home</a>
-        <a href="register.php">Register</a>
-        <a href="Student_dashboard1.php">Student Dashboard</a>
-        <a href="Admin.php" class="active">Admin Dashboard</a>
-        <a href="Profile.html">Profile</a>
-        <a href="Events.html">Events</a>
-        <a href="About.html">About Us</a>
-        <a href="ContactUs.html">Contact Us</a>
-        <a href="Feedback.html">Feedback</a>
-        <a href="Location.html">Location</a>
+        <a href="Admin.php" class="active">Dashboard</a>
+        <a href="students.php">Students</a>
+        <a href="academic_management.php">Academics</a>
+        <a href="admin_events.php">Events</a>
+        <a href="assignments.php">Assignments</a>
+        <a href="announcements.php">Notices</a>
+        <a href="audit_logs.php">Audit Logs</a>
         <a href="logout.php">Logout</a>
     </nav>
 </header>
@@ -835,6 +858,20 @@ a:focus-visible {
     <section class="feature-grid">
 
         <article class="feature-card">
+            <div class="feature-icon">🎓</div>
+            <h3>Academic Management</h3>
+            <p>Manage student academic performance and semester marks.</p>
+
+            <ul>
+                <li>Add or update student CGPA</li>
+                <li>Update attendance percentage</li>
+                <li>Enter subject-wise semester marks</li>
+            </ul>
+
+            <a class="action-link" href="academic_management.php">Manage Academics</a>
+        </article>
+
+        <article class="feature-card">
             <div class="feature-icon">🎉</div>
             <h3>Event Management</h3>
             <p>Manage college events and upload event posters.</p>
@@ -869,9 +906,9 @@ a:focus-visible {
             <p>Organize academic submissions and grading.</p>
 
             <ul>
-                <li>Upload assignments</li>
-                <li>Check student submissions</li>
-                <li>Enter marks and provide feedback</li>
+                <li>Add student submission status</li>
+                <li>Update grade and result</li>
+                <li>Send feedback to students</li>
             </ul>
 
             <a class="action-link" href="assignments.php">Manage Assignments</a>

@@ -829,7 +829,7 @@ Registration
 <nav id="navigation">
 
 
-<a href="Home.html">
+<a href="Home.php">
 Home
 </a>
 
@@ -849,7 +849,7 @@ Profile
 </a>
 
 
-<a href="Events.html">
+<a href="Events.php">
 Events
 </a>
 

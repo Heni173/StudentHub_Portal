@@ -345,8 +345,9 @@ footer p {
         src="logo.jpeg"
         alt="Student Hub Logo">
 
-    <h1>Student Management System</h1>
-    <p>Student Hub Portal</p>
+    <h1>Student Hub</h1>
+    <h2>Student Management System</h2>
+
 </header>
 
 <div class="container">

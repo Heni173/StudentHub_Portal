@@ -8,6 +8,136 @@ if (strtolower(trim($_SESSION["role"] ?? "")) !== "student") {
 
 $showLoginSuccess = !empty($_SESSION["login_success"]);
 unset($_SESSION["login_success"]);
+
+function h($value)
+{
+    return htmlspecialchars((string)$value, ENT_QUOTES, "UTF-8");
+}
+
+/* ---- Semester-wise subject marks + submissions added by admin ---- */
+require_once "db.php";
+
+$marksBySemester = [];
+$submissions = [];
+$announcements = [];
+$timetableItems = [];
+$examItems = [];
+
+if (isset($conn) && $conn instanceof mysqli) {
+    $marksUserId = (int)($_SESSION["user_id"] ?? 0);
+
+    /* ---- Announcements published by admin ---- */
+    try {
+        $announcementResult = $conn->query(
+            "SELECT id, title, message, category, created_at
+             FROM announcements
+             ORDER BY created_at DESC, id DESC"
+        );
+
+        if ($announcementResult) {
+            while ($announcementRow = $announcementResult->fetch_assoc()) {
+                $announcements[] = $announcementRow;
+            }
+            $announcementResult->free();
+        }
+    } catch (Throwable $e) {
+        error_log("Announcements query failed: " . $e->getMessage());
+    }
+
+    /* ---- Timetable published by admin ---- */
+    try {
+        $timetableResult = $conn->query(
+            "SELECT semester, day_of_week, start_time, end_time,
+                    subject, faculty, room
+             FROM timetable
+             ORDER BY semester,
+                      FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday',
+                            'Thursday', 'Friday', 'Saturday'),
+                      start_time"
+        );
+
+        if ($timetableResult) {
+            while ($timetableRow = $timetableResult->fetch_assoc()) {
+                $timetableItems[] = $timetableRow;
+            }
+            $timetableResult->free();
+        }
+    } catch (Throwable $e) {
+        error_log("Timetable query failed: " . $e->getMessage());
+    }
+
+    /* ---- Exam and practical schedule published by admin ---- */
+    try {
+        $examResult = $conn->query(
+            "SELECT semester, exam_type, subject, exam_date,
+                    start_time, end_time, venue
+             FROM exam_schedule
+             ORDER BY exam_date, start_time"
+        );
+
+        if ($examResult) {
+            while ($examRow = $examResult->fetch_assoc()) {
+                $examItems[] = $examRow;
+            }
+            $examResult->free();
+        }
+    } catch (Throwable $e) {
+        error_log("Exam schedule query failed: " . $e->getMessage());
+    }
+
+    try {
+        $marksStmt = $conn->prepare(
+            "SELECT semester, subject_name, marks_obtained, total_marks
+             FROM subject_marks
+             WHERE user_id = ?
+             ORDER BY semester, subject_name"
+        );
+
+        if ($marksStmt) {
+            $marksStmt->bind_param("i", $marksUserId);
+            $marksStmt->execute();
+            $marksResult = $marksStmt->get_result();
+
+            while ($marksRow = $marksResult->fetch_assoc()) {
+                $marksBySemester[(int)$marksRow["semester"]][] = $marksRow;
+            }
+
+            $marksStmt->close();
+        }
+    } catch (Throwable $e) {
+        error_log("Subject marks query failed: " . $e->getMessage());
+    }
+
+    try {
+        $subStmt = $conn->prepare(
+            "SELECT subject_name, assignment_title, submission_date,
+                    status, grade, feedback
+             FROM student_assignments
+             WHERE user_id = ?
+             ORDER BY submission_date DESC, id DESC"
+        );
+
+        if ($subStmt) {
+            $subStmt->bind_param("i", $marksUserId);
+            $subStmt->execute();
+            $subResult = $subStmt->get_result();
+
+            while ($subRow = $subResult->fetch_assoc()) {
+                $submissions[] = $subRow;
+            }
+
+            $subStmt->close();
+        }
+    } catch (Throwable $e) {
+        error_log("Submissions query failed: " . $e->getMessage());
+    }
+}
+
+$submissionLabels = [
+    "graded"    => "✓ Graded",
+    "submitted" => "✓ Submitted",
+    "review"    => "⏳ Under Review",
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -845,6 +975,316 @@ body.dark .details-table th{
 }
 
 
+/* ADMIN ANNOUNCEMENTS */
+
+.announcement-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:18px;
+    text-align:left;
+}
+
+.announcement-card{
+    background:linear-gradient(135deg,#F8FAFC,#EAF4F8);
+    border-left:5px solid #005F73;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+    overflow-wrap:anywhere;
+}
+
+.announcement-card h4{
+    color:#002147;
+    font-size:21px;
+    margin-bottom:10px;
+}
+
+.announcement-card p{
+    line-height:1.7;
+    white-space:pre-wrap;
+    margin:12px 0;
+}
+
+.announcement-meta{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    font-size:13px;
+    color:#607d8b;
+}
+
+.announcement-category{
+    display:inline-block;
+    padding:5px 11px;
+    border-radius:20px;
+    font-weight:bold;
+    text-transform:capitalize;
+    background:#dceeff;
+    color:#005F73;
+}
+
+.announcement-category.academic{background:#d9f7e5;color:#087443;}
+.announcement-category.exam{background:#fff0c9;color:#8a6100;}
+.announcement-category.event{background:#ece3ff;color:#5b34b0;}
+.announcement-category.urgent{background:#fee2e2;color:#b42318;}
+
+.announcements-empty{
+    background:#EAF4F8;
+    border-radius:12px;
+    padding:22px;
+    text-align:center;
+    color:#607d8b;
+}
+
+body.dark .announcement-card{
+    background:#222b35;
+    color:#f1f5f9;
+}
+
+body.dark .announcement-card h4{
+    color:#4dc8e0;
+}
+
+body.dark .announcement-meta{
+    color:#b9cbd1;
+}
+
+body.dark .announcements-empty{
+    background:#222b35;
+    color:#ccc;
+}
+
+/* SUBJECT MARKS (ADDED) */
+
+.marks-sem{
+    color:#005F73;
+    font-size:22px;
+    margin:25px 0 12px;
+    text-align:left;
+}
+
+.marks-scroll{
+    width:100%;
+    overflow-x:auto;
+    border-radius:12px;
+}
+
+.marks-table{
+    width:100%;
+    min-width:550px;
+    border-collapse:collapse;
+    background:white;
+}
+
+.marks-table th{
+    background:#002147;
+    color:white;
+    padding:15px 12px;
+    font-size:17px;
+    text-align:center;
+}
+
+.marks-table td{
+    padding:15px 12px;
+    border:1px solid #ddd;
+    font-size:16px;
+    text-align:center;
+    vertical-align:middle;
+}
+
+.marks-table tbody tr:nth-child(even){
+    background:#EAF4F8;
+}
+
+.marks-table tbody tr:hover{
+    background:#d7f0f5;
+}
+
+.marks-empty{
+    color:#777;
+    font-size:17px;
+    padding:15px;
+}
+
+body.dark .marks-sem{
+    color:#4dc8e0;
+}
+
+body.dark .marks-table{
+    background:#1e1e1e;
+}
+
+body.dark .marks-table td{
+    background:#1e1e1e;
+    color:white;
+    border-color:#555;
+}
+
+body.dark .marks-table tbody tr:nth-child(even) td{
+    background:#292929;
+}
+
+body.dark .marks-table tbody tr:hover td{
+    background:#333;
+}
+
+body.dark .marks-empty{
+    color:#ccc;
+}
+
+
+
+/* SUBMISSIONS ADDED BY ADMIN (ADDED) */
+
+#subSearch{
+    width:45%;
+    min-width:250px;
+    padding:13px 20px;
+    border:1px solid #ccc;
+    border-radius:30px;
+    outline:none;
+    font-size:16px;
+    transition:0.3s;
+}
+
+#subStatus,
+#subSort{
+    width:190px;
+    padding:13px 18px;
+    border:1px solid #ccc;
+    border-radius:30px;
+    outline:none;
+    font-size:16px;
+    background:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+#subSearch:focus,
+#subStatus:focus,
+#subSort:focus{
+    border-color:#005F73;
+    box-shadow:0 0 0 3px rgba(0,95,115,0.12);
+}
+
+body.dark #subSearch,
+body.dark #subStatus,
+body.dark #subSort{
+    background:#292929;
+    color:white;
+    border-color:#555;
+}
+
+body.dark #subSearch:focus,
+body.dark #subStatus:focus,
+body.dark #subSort:focus{
+    border-color:#4dc8e0;
+    box-shadow:0 0 0 3px rgba(77,200,224,0.15);
+}
+
+.feedback-cell{
+    max-width:260px;
+    overflow-wrap:anywhere;
+    line-height:1.5;
+}
+
+#subNoResult{
+    display:none;
+    text-align:center;
+    padding:25px;
+    color:#777;
+    font-size:17px;
+}
+
+body.dark #subNoResult{
+    color:#ccc;
+}
+
+#subPagination{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-top:25px;
+    flex-wrap:wrap;
+}
+
+.sub-page-button{
+    border:none;
+    background:#EAF4F8;
+    color:#002147;
+    min-width:40px;
+    height:40px;
+    padding:0 13px;
+    border-radius:20px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.sub-page-button:hover{
+    background:#4dc8e0;
+    color:#002147;
+    transform:translateY(-2px);
+}
+
+.sub-page-button.active{
+    background:#002147;
+    color:white;
+}
+
+.sub-page-button:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+    transform:none;
+}
+
+body.dark .sub-page-button{
+    background:#333;
+    color:white;
+}
+
+body.dark .sub-page-button:hover{
+    background:#4dc8e0;
+    color:#002147;
+}
+
+body.dark .sub-page-button.active{
+    background:#4dc8e0;
+    color:#002147;
+}
+
+@media(max-width:900px){
+
+    #subSearch{
+        width:50%;
+    }
+
+}
+
+@media(max-width:700px){
+
+    #subSearch,
+    #subStatus,
+    #subSort{
+        width:90%;
+        min-width:0;
+    }
+
+}
+
+
+
+
+/* TIMETABLE AND EXAM TABLE MOBILE LABEL FIX */
+@media(max-width:700px){
+    .details-table.schedule-table td:nth-child(n)::before{
+        content:attr(data-label);
+    }
+}
+
 </style>
 
 </head>
@@ -886,16 +1326,13 @@ body.dark .details-table th{
 
     <nav id="navigation">
 
-        <a href="Home.html">Home</a>
-        <a href="register.php">Register</a>
+        <a href="Home.php">Home</a>
 
         <a href="Student_dashboard1.php" class="active">Dashboard</a>
 
-        <a href="Admin.php">Admin Dashboard</a>
+        <a href="Profile.php">Profile</a>
 
-        <a href="Profile.html">Profile</a>
-
-        <a href="Events.html">Events</a>
+        <a href="Events.php">Events</a>
 
         <a href="About.html">About Us</a>
 
@@ -1001,7 +1438,251 @@ body.dark .details-table th{
 </section>
 
 
-<!-- RECENT SUBMISSIONS -->
+<!-- ANNOUNCEMENTS PUBLISHED BY ADMIN -->
+
+<section class="dashboard-box" id="announcements">
+    <h3>📢 Latest Announcements</h3>
+
+    <?php if (count($announcements) > 0): ?>
+        <div class="announcement-list">
+            <?php foreach ($announcements as $announcement): ?>
+                <?php
+                $announcementCategory = strtolower(trim((string)($announcement["category"] ?? "general")));
+                $allowedAnnouncementCategories = ["general", "academic", "exam", "event", "urgent"];
+                if (!in_array($announcementCategory, $allowedAnnouncementCategories, true)) {
+                    $announcementCategory = "general";
+                }
+
+                $announcementDate = "";
+                if (!empty($announcement["created_at"])) {
+                    $announcementTimestamp = strtotime((string)$announcement["created_at"]);
+                    if ($announcementTimestamp !== false) {
+                        $announcementDate = date("d M Y, h:i A", $announcementTimestamp);
+                    }
+                }
+                ?>
+                <article class="announcement-card">
+                    <div class="announcement-meta">
+                        <span class="announcement-category <?= h($announcementCategory) ?>">
+                            <?= h(ucfirst($announcementCategory)) ?>
+                        </span>
+                        <?php if ($announcementDate !== ""): ?>
+                            <span>📅 <?= h($announcementDate) ?></span>
+                        <?php endif; ?>
+                    </div>
+
+                    <h4><?= h($announcement["title"] ?? "") ?></h4>
+                    <p><?= h($announcement["message"] ?? "") ?></p>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    <?php else: ?>
+        <div class="announcements-empty">
+            📭 No announcements have been published yet.
+        </div>
+    <?php endif; ?>
+</section>
+
+
+<!-- TIMETABLE ADDED BY ADMIN -->
+
+<section class="dashboard-box" id="studentTimetable">
+
+    <h3>🗓️ College Timetable</h3>
+
+    <?php if (count($timetableItems) > 0): ?>
+
+        <div class="table-container">
+
+            <table class="details-table schedule-table">
+                <thead>
+                    <tr>
+                        <th>Semester</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Subject</th>
+                        <th>Faculty</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($timetableItems as $lecture): ?>
+                        <?php
+                        $lectureStart = strtotime((string)($lecture["start_time"] ?? ""));
+                        $lectureEnd = strtotime((string)($lecture["end_time"] ?? ""));
+                        ?>
+                        <tr>
+                            <td data-label="Semester"><?= (int)$lecture["semester"] ?></td>
+                            <td data-label="Day"><?= h($lecture["day_of_week"] ?? "—") ?></td>
+                            <td data-label="Time">
+                                <?= $lectureStart !== false ? h(date("h:i A", $lectureStart)) : "—" ?>
+                                -
+                                <?= $lectureEnd !== false ? h(date("h:i A", $lectureEnd)) : "—" ?>
+                            </td>
+                            <td data-label="Subject"><?= h($lecture["subject"] ?? "—") ?></td>
+                            <td data-label="Faculty"><?= h(($lecture["faculty"] ?? "") !== "" ? $lecture["faculty"] : "—") ?></td>
+                            <td data-label="Room"><?= h(($lecture["room"] ?? "") !== "" ? $lecture["room"] : "—") ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+
+        </div>
+
+    <?php else: ?>
+        <div class="announcements-empty">🗓️ No timetable has been added yet.</div>
+    <?php endif; ?>
+
+</section>
+
+
+<!-- EXAMS AND PRACTICALS ADDED BY ADMIN -->
+
+<section class="dashboard-box" id="studentExamSchedule">
+
+    <h3>📝 Exams &amp; Practicals Schedule</h3>
+
+    <?php if (count($examItems) > 0): ?>
+
+        <div class="table-container">
+
+            <table class="details-table schedule-table">
+                <thead>
+                    <tr>
+                        <th>Semester</th>
+                        <th>Type</th>
+                        <th>Subject</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Venue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($examItems as $exam): ?>
+                        <?php
+                        $examTimestamp = strtotime((string)($exam["exam_date"] ?? ""));
+                        $examStart = strtotime((string)($exam["start_time"] ?? ""));
+                        $examEnd = !empty($exam["end_time"])
+                            ? strtotime((string)$exam["end_time"])
+                            : false;
+                        ?>
+                        <tr>
+                            <td data-label="Semester"><?= (int)$exam["semester"] ?></td>
+                            <td data-label="Type"><?= h(ucfirst((string)($exam["exam_type"] ?? "—"))) ?></td>
+                            <td data-label="Subject"><?= h($exam["subject"] ?? "—") ?></td>
+                            <td data-label="Date">
+                                <?= $examTimestamp !== false ? h(date("d M Y", $examTimestamp)) : "—" ?>
+                            </td>
+                            <td data-label="Time">
+                                <?= $examStart !== false ? h(date("h:i A", $examStart)) : "—" ?>
+                                <?php if ($examEnd !== false): ?>
+                                    - <?= h(date("h:i A", $examEnd)) ?>
+                                <?php endif; ?>
+                            </td>
+                            <td data-label="Venue"><?= h(($exam["venue"] ?? "") !== "" ? $exam["venue"] : "—") ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+
+        </div>
+
+    <?php else: ?>
+        <div class="announcements-empty">📝 No exam or practical schedule has been added yet.</div>
+    <?php endif; ?>
+
+</section>
+
+
+<!-- SUBJECT MARKS (ADDED) -->
+
+<section class="dashboard-box">
+
+    <h3>🎓 Subject Marks</h3>
+
+    <?php if (count($marksBySemester) > 0): ?>
+
+        <?php foreach ($marksBySemester as $marksSem => $marksRows): ?>
+
+            <h4 class="marks-sem">Semester <?= (int)$marksSem ?></h4>
+
+            <div class="marks-scroll">
+                <table class="marks-table">
+                    <thead>
+                        <tr>
+                            <th>📚 Subject</th>
+                            <th>📝 Marks Obtained</th>
+                            <th>📊 Total Marks</th>
+                            <th>📈 Percentage</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    <?php foreach ($marksRows as $marksItem): ?>
+                        <?php
+                        $marksTotal = (float)$marksItem["total_marks"];
+                        $marksPercent = $marksTotal > 0
+                            ? ((float)$marksItem["marks_obtained"] / $marksTotal) * 100
+                            : 0;
+                        ?>
+                        <tr>
+                            <td><?= htmlspecialchars((string)$marksItem["subject_name"], ENT_QUOTES, "UTF-8") ?></td>
+                            <td><?= htmlspecialchars((string)$marksItem["marks_obtained"], ENT_QUOTES, "UTF-8") ?></td>
+                            <td><?= htmlspecialchars((string)$marksItem["total_marks"], ENT_QUOTES, "UTF-8") ?></td>
+                            <td><?= number_format($marksPercent, 2) ?>%</td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+        <?php endforeach; ?>
+
+    <?php else: ?>
+
+        <p class="marks-empty">No subject marks available yet.</p>
+
+    <?php endif; ?>
+
+</section>
+
+
+<!-- Old static submission elements: kept hidden only so Dashboard.js
+     keeps working without errors. Real data is shown in the section below. -->
+
+<div hidden aria-hidden="true">
+
+    <input type="text" id="submissionSearch">
+
+    <select id="statusFilter">
+        <option value="all">All</option>
+        <option value="graded">Graded</option>
+        <option value="submitted">Submitted</option>
+        <option value="review">Review</option>
+    </select>
+
+    <select id="sortFilter">
+        <option value="default">Sort</option>
+        <option value="subjectAsc">Subject A - Z</option>
+        <option value="subjectDesc">Subject Z - A</option>
+        <option value="dateAsc">Date Oldest - Newest</option>
+        <option value="dateDesc">Date Newest - Oldest</option>
+    </select>
+
+    <div id="loadingSubmissions"></div>
+
+    <table class="details-table">
+        <tbody id="submissionBody"></tbody>
+    </table>
+
+    <div id="noSubmission"></div>
+
+    <div id="pagination"></div>
+
+</div>
+
+
+<!-- RECENT SUBMISSIONS (added by admin from assignments.php) -->
 
 <section class="dashboard-box">
 
@@ -1014,13 +1695,13 @@ body.dark .details-table th{
 
         <input
             type="text"
-            id="submissionSearch"
+            id="subSearch"
             placeholder="🔍 Search subject or assignment..."
             aria-label="Search submissions">
 
 
         <select
-            id="statusFilter"
+            id="subStatus"
             aria-label="Filter submissions by status">
 
             <option value="all">
@@ -1042,10 +1723,8 @@ body.dark .details-table th{
         </select>
 
 
-        <!-- ADDED SORTING -->
-
         <select
-            id="sortFilter"
+            id="subSort"
             aria-label="Sort submissions">
 
             <option value="default">
@@ -1075,14 +1754,6 @@ body.dark .details-table th{
 
     <div class="table-container">
 
-
-        <!-- ADDED LOADING STATE -->
-
-        <div id="loadingSubmissions">
-            ⏳ Loading submission data...
-        </div>
-
-
         <table class="details-table">
 
             <thead>
@@ -1097,30 +1768,66 @@ body.dark .details-table th{
 
                     <th>📊 Status</th>
 
+                    <th>💬 Feedback</th>
+
                 </tr>
 
             </thead>
 
 
-            <tbody id="submissionBody">
+            <tbody id="subBody">
 
-                <tr>
-                    <td colspan="4">Loading submissions...</td>
+            <?php foreach ($submissions as $sub): ?>
+
+                <?php
+                $subStatus = (string)$sub["status"];
+                $subLabel = $submissionLabels[$subStatus] ?? $subStatus;
+
+                if ($subStatus === "graded" && !empty($sub["grade"])) {
+                    $subLabel .= " (" . $sub["grade"] . ")";
+                }
+
+                $subTimestamp = strtotime((string)$sub["submission_date"]);
+                $subDateValue = $subTimestamp ? date("Y-m-d", $subTimestamp) : "";
+                $subDateLabel = $subTimestamp ? date("d M Y", $subTimestamp) : "—";
+                $subFeedback = trim((string)($sub["feedback"] ?? ""));
+                ?>
+
+                <tr
+                    data-subject="<?= h(strtolower((string)$sub["subject_name"])) ?>"
+                    data-title="<?= h(strtolower((string)$sub["assignment_title"])) ?>"
+                    data-date="<?= h($subDateValue) ?>"
+                    data-status="<?= h($subStatus) ?>">
+
+                    <td data-label="📚 Subject"><?= h($sub["subject_name"]) ?></td>
+
+                    <td data-label="📝 Assignment"><?= h($sub["assignment_title"]) ?></td>
+
+                    <td data-label="📅 Date"><?= h($subDateLabel) ?></td>
+
+                    <td data-label="📊 Status">
+                        <span class="status <?= h($subStatus) ?>"><?= h($subLabel) ?></span>
+                    </td>
+
+                    <td data-label="💬 Feedback" class="feedback-cell">
+                        <?= $subFeedback !== "" ? h($subFeedback) : "—" ?>
+                    </td>
+
                 </tr>
+
+            <?php endforeach; ?>
 
             </tbody>
 
         </table>
 
 
-        <div id="noSubmission">
+        <div id="subNoResult">
             🔍 No submissions found.
         </div>
 
 
-        <!-- ADDED PAGINATION -->
-
-        <div id="pagination"></div>
+        <div id="subPagination"></div>
 
     </div>
 
@@ -1162,6 +1869,134 @@ if (closeLoginSuccess && loginSuccessBanner) {
 </script>
 
 
+
+<script>
+/* Search / filter / sort / pagination for submissions added by admin */
+(function () {
+    const body = document.getElementById("subBody");
+
+    if (!body) {
+        return;
+    }
+
+    const rows = Array.from(body.querySelectorAll("tr[data-title]"));
+    const searchInput = document.getElementById("subSearch");
+    const statusSelect = document.getElementById("subStatus");
+    const sortSelect = document.getElementById("subSort");
+    const noResult = document.getElementById("subNoResult");
+    const pagination = document.getElementById("subPagination");
+
+    const perPage = 5;
+    let currentPage = 1;
+
+    function getRows() {
+        const text = searchInput.value.trim().toLowerCase();
+        const status = statusSelect.value;
+
+        const list = rows.filter(function (row) {
+            const matchText = text === "" ||
+                row.dataset.subject.includes(text) ||
+                row.dataset.title.includes(text);
+
+            const matchStatus = status === "all" || row.dataset.status === status;
+
+            return matchText && matchStatus;
+        });
+
+        const sort = sortSelect.value;
+
+        list.sort(function (a, b) {
+            if (sort === "subjectAsc") {
+                return a.dataset.subject.localeCompare(b.dataset.subject);
+            }
+            if (sort === "subjectDesc") {
+                return b.dataset.subject.localeCompare(a.dataset.subject);
+            }
+            if (sort === "dateAsc") {
+                return a.dataset.date.localeCompare(b.dataset.date);
+            }
+            if (sort === "dateDesc") {
+                return b.dataset.date.localeCompare(a.dataset.date);
+            }
+            return rows.indexOf(a) - rows.indexOf(b);
+        });
+
+        return list;
+    }
+
+    function makeButton(label, disabled, active, onClick) {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "sub-page-button" + (active ? " active" : "");
+        button.textContent = label;
+        button.disabled = disabled;
+        button.addEventListener("click", onClick);
+
+        return button;
+    }
+
+    function render() {
+        const list = getRows();
+        const totalPages = Math.max(1, Math.ceil(list.length / perPage));
+
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+        rows.forEach(function (row) {
+            row.style.display = "none";
+        });
+
+        const start = (currentPage - 1) * perPage;
+
+        list.slice(start, start + perPage).forEach(function (row) {
+            row.style.display = "";
+            body.appendChild(row);
+        });
+
+        if (rows.length === 0) {
+            noResult.textContent = "📭 No submissions have been added yet.";
+            noResult.style.display = "block";
+        } else if (list.length === 0) {
+            noResult.textContent = "🔍 No submissions found.";
+            noResult.style.display = "block";
+        } else {
+            noResult.style.display = "none";
+        }
+
+        pagination.innerHTML = "";
+
+        if (list.length > perPage) {
+            pagination.appendChild(makeButton("←", currentPage === 1, false, function () {
+                currentPage--;
+                render();
+            }));
+
+            for (let p = 1; p <= totalPages; p++) {
+                pagination.appendChild(makeButton(String(p), false, p === currentPage, function () {
+                    currentPage = p;
+                    render();
+                }));
+            }
+
+            pagination.appendChild(makeButton("→", currentPage === totalPages, false, function () {
+                currentPage++;
+                render();
+            }));
+        }
+    }
+
+    [searchInput, statusSelect, sortSelect].forEach(function (el) {
+        el.addEventListener("input", function () {
+            currentPage = 1;
+            render();
+        });
+    });
+
+    render();
+})();
+</script>
 
 </body>
 

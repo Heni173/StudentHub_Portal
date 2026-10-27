@@ -1,8 +1,78 @@
+<?php
+session_start();
+require_once "db.php";
+
+if (!isset($_SESSION["user_id"]) || strtolower($_SESSION["role"] ?? "") !== "student") {
+    header("Location: login.php");
+    exit();
+}
+
+$userId = (int) $_SESSION["user_id"];
+
+$stmt = $conn->prepare(
+    "SELECT full_name, username, enrollment, email, phone,
+            gender, course, department, year, role
+     FROM users
+     WHERE id = ? AND role = 'student'
+     LIMIT 1"
+);
+
+if (!$stmt) {
+    die("Unable to load profile. Please check the database connection.");
+}
+
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+
+$result = $stmt->get_result();
+$student = $result->fetch_assoc();
+$stmt->close();
+
+if (!$student) {
+    header("Location: logout.php");
+    exit();
+}
+
+function profileValue($value) {
+    if ($value === null || trim((string)$value) === "") {
+        return "Not Available";
+    }
+
+    return htmlspecialchars((string)$value, ENT_QUOTES, "UTF-8");
+}
+
+/* ---- Academic details (CGPA & Attendance) ---- */
+$cgpaDisplay = "Not Available";
+$attendanceDisplay = "Not Available";
+
+$academicStmt = $conn->prepare(
+    "SELECT cgpa, attendance
+     FROM academic_details
+     WHERE user_id = ?
+     LIMIT 1"
+);
+
+if ($academicStmt) {
+    $academicStmt->bind_param("i", $userId);
+    $academicStmt->execute();
+    $academicRow = $academicStmt->get_result()->fetch_assoc();
+    $academicStmt->close();
+
+    if ($academicRow) {
+        if ($academicRow["cgpa"] !== null && $academicRow["cgpa"] !== "") {
+            $cgpaDisplay = number_format((float)$academicRow["cgpa"], 2);
+        }
+
+        if ($academicRow["attendance"] !== null && $academicRow["attendance"] !== "") {
+            $attendanceDisplay = number_format((float)$academicRow["attendance"], 2) . "%";
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,7 +81,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-
         * {
             margin: 0;
             padding: 0;
@@ -160,6 +229,7 @@
             border: 1px solid #ddd;
             padding: 16px;
             font-size: 20px;
+            overflow-wrap: anywhere;
         }
 
         .profile-table td:first-child {
@@ -221,6 +291,7 @@
         .academic-card p {
             font-size: 20px;
             font-weight: bold;
+            overflow-wrap: anywhere;
         }
 
         footer {
@@ -279,7 +350,6 @@
         }
 
         @media(max-width: 700px) {
-
             #themeButton {
                 top: 15px;
                 right: 15px;
@@ -332,158 +402,120 @@
             .academic-card {
                 width: 100%;
             }
-
         }
-
     </style>
-
 </head>
 
 <body>
 
     <header>
-
-        <button id="themeButton" type="button" title="Change Theme">
-            🌙
-        </button>
+        <button id="themeButton" type="button" title="Change Theme">🌙</button>
 
         <img src="logo.jpeg" alt="Student Hub Logo">
 
         <h2>STUDENT HUB</h2>
+        <h3>My Profile - <?= profileValue($student["full_name"]) ?></h3>
 
-        <h3>My Profile</h3>
-
-        <button id="menuButton" type="button">
-            ☰ Menu
-        </button>
+        <button id="menuButton" type="button">☰ Menu</button>
 
         <nav id="navigation">
-
-            <a href="Home.html">Home</a>
+            <a href="Home.php">Home</a>
             <a href="register.php">Register</a>
-            <a href="Student_dashboard1.php"> Student Dashboard</a>
-            <a href="Admin.php">Admin Dashboard</a>
-            <a href="Profile.html" class="active">Profile</a>
-            <a href="Events.html">Events</a>
+            <a href="Student_dashboard1.php">Dashboard</a>
+            <a href="Profile.php" class="active">Profile</a>
+            <a href="Events.php">Events</a>
             <a href="About.html">About Us</a>
             <a href="ContactUs.html">Contact Us</a>
             <a href="Feedback.html">Feedback</a>
             <a href="Location.html">Location</a>
             <a href="logout.php">Logout</a>
-
         </nav>
-
     </header>
 
     <main>
-
         <section class="profile-box">
-
             <h3>👤 Student Information</h3>
 
             <table class="profile-table">
-
                 <thead>
-
                     <tr>
                         <th>Field</th>
                         <th>Details</th>
                     </tr>
-
                 </thead>
 
                 <tbody id="profileBody">
-
                     <tr>
                         <td>Full Name</td>
-                        <td>Heni Patel</td>
+                        <td><?= profileValue($student["full_name"]) ?></td>
                     </tr>
-
+                    <tr>
+                        <td>Username</td>
+                        <td><?= profileValue($student["username"]) ?></td>
+                    </tr>
                     <tr>
                         <td>Enrollment Number</td>
-                        <td>25CS061</td>
+                        <td><?= profileValue($student["enrollment"]) ?></td>
                     </tr>
-
+                    <tr>
+                        <td>Email</td>
+                        <td><?= profileValue($student["email"]) ?></td>
+                    </tr>
+                    <tr>
+                        <td>Phone</td>
+                        <td><?= profileValue($student["phone"]) ?></td>
+                    </tr>
+                    <tr>
+                        <td>Gender</td>
+                        <td><?= profileValue($student["gender"]) ?></td>
+                    </tr>
                     <tr>
                         <td>Course</td>
-                        <td>Computer Science and Engineering</td>
+                        <td><?= profileValue($student["course"]) ?></td>
                     </tr>
-
                     <tr>
                         <td>Department</td>
-                        <td>Computer Science</td>
+                        <td><?= profileValue($student["department"]) ?></td>
                     </tr>
-
                     <tr>
-                        <td>Division</td>
-                        <td>2</td>
+                        <td>Year</td>
+                        <td><?= profileValue($student["year"]) ?></td>
                     </tr>
-
-                    <tr>
-                        <td>Batch</td>
-                        <td>A2</td>
-                    </tr>
-
-                    <tr>
-                        <td>College</td>
-                        <td>CHARUSAT</td>
-                    </tr>
-
                 </tbody>
-
             </table>
-
         </section>
 
         <section class="info-box">
-
             <h3>📊 Academic Details</h3>
 
             <div class="academic-details">
-
                 <div class="academic-card">
-
                     <h4>📈 CGPA</h4>
-
-                    <p>8.5</p>
-
+                    <p><?= htmlspecialchars($cgpaDisplay, ENT_QUOTES, "UTF-8") ?></p>
                 </div>
 
                 <div class="academic-card">
-
                     <h4>📅 Attendance</h4>
-
-                    <p>85%</p>
-
+                    <p><?= htmlspecialchars($attendanceDisplay, ENT_QUOTES, "UTF-8") ?></p>
                 </div>
 
                 <div class="academic-card">
-
-                    <h4>✓ Status</h4>
-
-                    <p>Active Student</p>
-
+                    <h4>✓ Account Role</h4>
+                    <p><?= profileValue(ucfirst($student["role"])) ?></p>
                 </div>
-
             </div>
-
         </section>
-
     </main>
 
     <footer>
-
         <p><b>Student Hub</b></p>
         <p>Learn • Explore • Grow</p>
         <p>&copy; 2026 Student Hub. All Rights Reserved.</p>
-        <p>Designed & Developed by Heni Patel</p>
-
+        <p>Designed &amp; Developed by Heni Patel</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
     <script src="Profile.js"></script>
 
 </body>
-
 </html>

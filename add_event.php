@@ -1,4 +1,5 @@
 
+
 <?php
 session_start();
 
@@ -26,6 +27,9 @@ $_SESSION["last_activity"] = time();
 
 require_once "db_events.php";
 
+// Preserve the event database connection separately.
+$eventConn = $conn;
+
 $message = "";
 $messageType = "";
 
@@ -42,7 +46,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $category = trim($_POST["category"] ?? "General");
     $status = $_POST["status"] ?? "open";
 
-    if ($title === "" || $description === "" || $eventDate === "" || $category === "") {
+    if (
+        $title === "" ||
+        $description === "" ||
+        $eventDate === "" ||
+        $category === ""
+    ) {
         $message = "Please fill in all required fields.";
         $messageType = "danger";
     } elseif (!in_array($status, ["open", "closed"], true)) {
@@ -60,9 +69,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $posterName = null;
     $uploadedPath = null;
 
-    if ($message === "" && isset($_FILES["poster"]) &&
-        $_FILES["poster"]["error"] !== UPLOAD_ERR_NO_FILE) {
-
+    if (
+        $message === "" &&
+        isset($_FILES["poster"]) &&
+        $_FILES["poster"]["error"] !== UPLOAD_ERR_NO_FILE
+    ) {
         $file = $_FILES["poster"];
 
         if ($file["error"] !== UPLOAD_ERR_OK) {
@@ -85,19 +96,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if (
                 !isset($allowedTypes[$mimeType]) ||
                 $imageInfo === false ||
-                !in_array($imageInfo[2], [IMAGETYPE_JPEG, IMAGETYPE_PNG], true)
+                !in_array(
+                    $imageInfo[2],
+                    [IMAGETYPE_JPEG, IMAGETYPE_PNG],
+                    true
+                )
             ) {
                 $message = "Only valid JPG, JPEG and PNG images are allowed.";
                 $messageType = "danger";
             } else {
                 $uploadDirectory = __DIR__ . "/uploads/events/";
 
-                if (!is_dir($uploadDirectory) &&
-                    !mkdir($uploadDirectory, 0755, true)) {
+                if (
+                    !is_dir($uploadDirectory) &&
+                    !mkdir($uploadDirectory, 0755, true)
+                ) {
                     $message = "Unable to create the poster upload folder.";
                     $messageType = "danger";
                 } else {
-                    $posterName = bin2hex(random_bytes(16)) . "." . $allowedTypes[$mimeType];
+                    $posterName = bin2hex(random_bytes(16)) .
+                        "." . $allowedTypes[$mimeType];
+
                     $uploadedPath = $uploadDirectory . $posterName;
 
                     if (!move_uploaded_file($file["tmp_name"], $uploadedPath)) {
@@ -110,9 +129,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     if ($message === "") {
-        $stmt = $conn->prepare(
-            "INSERT INTO events (title, description, event_date, category, poster, status)
-             VALUES (?, ?, ?, ?, ?, ?)"
+        $stmt = $eventConn->prepare(
+            "INSERT INTO events
+            (title, description, event_date, category, poster, status)
+            VALUES (?, ?, ?, ?, ?, ?)"
         );
 
         if ($stmt) {
@@ -126,54 +146,68 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $status
             );
 
-            
-if ($stmt->execute()) {
-    $eventId = $conn->insert_id;
-    $stmt->close();
+            if ($stmt->execute()) {
+                $eventId = $eventConn->insert_id;
+                $stmt->close();
 
-    // Connect to the database containing audit_logs
-    require_once "db.php";
+                // Audit log uses the separate user database connection.
+                require_once "db.php";
+                $userConn = $conn;
 
-    $userId = (int)($_SESSION["user_id"] ?? 0);
-    $username = trim($_SESSION["username"] ?? $_SESSION["email"] ?? "admin");
-    $action = "ADD_EVENT";
-    $details = "New event added: " . $title;
+                $userId = (int)($_SESSION["user_id"] ?? 0);
+                $username = trim(
+                    $_SESSION["username"] ??
+                    $_SESSION["email"] ??
+                    "admin"
+                );
 
-    $logStmt = $conn->prepare(
-        "INSERT INTO audit_logs (user_id, username, action, details, created_at)
-         VALUES (?, ?, ?, ?, NOW())"
-    );
+                $action = "ADD_EVENT";
+                $details = "New event added: " . $title .
+                    " (Event ID: " . $eventId . ")";
 
-    if ($logStmt) {
-        $logStmt->bind_param(
-            "isss",
-            $userId,
-            $username,
-            $action,
-            $details
-        );
+                $logStmt = $userConn->prepare(
+                    "INSERT INTO audit_logs
+                    (user_id, username, action, details, created_at)
+                    VALUES (?, ?, ?, ?, NOW())"
+                );
 
-        if (!$logStmt->execute()) {
-            error_log("Audit log insert failed: " . $logStmt->error);
-        }
+                if ($logStmt) {
+                    $logStmt->bind_param(
+                        "isss",
+                        $userId,
+                        $username,
+                        $action,
+                        $details
+                    );
 
-        $logStmt->close();
-    } else {
-        error_log("Audit log prepare failed: " . $conn->error);
-    }
+                    if (!$logStmt->execute()) {
+                        error_log(
+                            "ADD_EVENT audit log failed: " . $logStmt->error
+                        );
+                    }
 
-    $conn->close();
+                    $logStmt->close();
+                } else {
+                    error_log(
+                        "ADD_EVENT audit log prepare failed: " .
+                        $userConn->error
+                    );
+                }
 
-    $_SESSION["event_message"] = "Event added successfully!";
-    $_SESSION["event_message_type"] = "success";
+                $userConn->close();
+                $eventConn->close();
 
-    header("Location: admin_events.php");
-    exit();
-}
-else {
+                $_SESSION["event_message"] = "Event added successfully!";
+                $_SESSION["event_message_type"] = "success";
+
+                header("Location: admin_events.php");
+                exit();
+            } else {
                 if ($uploadedPath !== null && is_file($uploadedPath)) {
                     unlink($uploadedPath);
                 }
+
+                error_log("Event insert failed: " . $stmt->error);
 
                 $message = "Unable to add event. Please try again.";
                 $messageType = "danger";
@@ -183,6 +217,8 @@ else {
             if ($uploadedPath !== null && is_file($uploadedPath)) {
                 unlink($uploadedPath);
             }
+
+            error_log("Event insert prepare failed: " . $eventConn->error);
 
             $message = "Database query failed.";
             $messageType = "danger";

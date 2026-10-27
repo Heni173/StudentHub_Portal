@@ -1,17 +1,16 @@
-
 <?php
 session_start();
 
-if (isset($_SESSION["user_id"])) {
-    $role = strtolower(trim($_SESSION["role"] ?? ""));
+$role = strtolower(trim($_SESSION["role"] ?? ""));
 
+if (isset($_SESSION["user_id"])) {
     if ($role === "student") {
-        header("Location: student_dashboard.php");
+        header("Location: Student_dashboard1.php");
         exit();
     }
 
     if ($role === "admin") {
-        header("Location: admin_dashboard.php");
+        header("Location: Admin.php");
         exit();
     }
 }
@@ -22,7 +21,6 @@ if (isset($_SESSION["user_id"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Student Hub - Login</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -448,18 +446,34 @@ if (isset($_SESSION["user_id"])) {
             ☰ Menu
         </button>
 
+        <!-- ROLE-BASED NAVIGATION -->
         <nav id="navigation">
-            <a href="Home.html">Home</a>
-            <a href="register.php">Register</a>
-            <a href="Student_dashboard1.php"> Student Dashboard</a>
-            <a href="Admin.php">Admin Dashboard</a>
-            <a href="Profile.html">Profile</a>
-            <a href="Events.html">Events</a>
+            <a href="Home.php">Home</a>
+            <a href="Events.php">Events</a>
             <a href="About.html">About Us</a>
             <a href="ContactUs.html">Contact Us</a>
-            <a href="Feedback.html">Feedback</a>
             <a href="Location.html">Location</a>
-            <a href="logout.php">Logout</a>
+
+            <?php if ($role === "admin" && isset($_SESSION["user_id"])) { ?>
+
+                <a href="Admin.php">Admin Dashboard</a>
+                <a href="Announcements.php">Announcements</a>
+                <a href="Profile.php">Profile</a>
+                <a href="logout.php">Logout</a>
+
+            <?php } elseif ($role === "student" && isset($_SESSION["user_id"])) { ?>
+
+                <a href="Student_dashboard1.php">Student Dashboard</a>
+                <a href="Profile.php">Profile</a>
+                <a href="Feedback.html">Feedback</a>
+                <a href="logout.php">Logout</a>
+
+            <?php } else { ?>
+
+                <a href="login.php">Login</a>
+                <a href="register.php">Register</a>
+
+            <?php } ?>
         </nav>
     </header>
 
@@ -486,36 +500,36 @@ if (isset($_SESSION["user_id"])) {
                 </div>
             <?php endif; ?>
 
-<form action="authenticate.php" method="POST">
-    <div class="form-row">
-        <label for="username"><b>Username</b></label>
-        <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="Enter Username"
-            autocomplete="username"
-            required
-        >
-    </div>
+            <form action="authenticate.php" method="POST">
+                <div class="form-row">
+                    <label for="username"><b>Username</b></label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter Username"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
 
-    <div class="form-row">
-        <label for="password"><b>Password</b></label>
-        <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter Password"
-            autocomplete="current-password"
-            required
-        >
-    </div>
+                <div class="form-row">
+                    <label for="password"><b>Password</b></label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter Password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
 
-    <div class="form-buttons">
-        <input type="submit" value="Login">
-        <input type="reset" value="Clear">
-    </div>
-</form>
+                <div class="form-buttons">
+                    <input type="submit" value="Login">
+                    <input type="reset" value="Clear">
+                </div>
+            </form>
 
         </section>
 
