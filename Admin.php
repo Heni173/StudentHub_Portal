@@ -735,6 +735,7 @@ a:focus-visible {
         <a href="announcements.php">Notices</a>
         <a href="audit_logs.php">Audit Logs</a>
         <a href="logout.php">Logout</a>
+        <a href="view_feedbacks.php">View Feedbacks</a>
     </nav>
 </header>
 
