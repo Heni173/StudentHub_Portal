@@ -465,23 +465,67 @@ Capture genuine screenshots from the working website.
 Recommended screenshots for the final practical report:
 
 1. Home Page with navigation and login.
+   <img width="1916" height="912" alt="image" src="https://github.com/user-attachments/assets/a3dda55d-0795-4efa-8c34-87d3f8a5971a" />
+   <img width="1907" height="912" alt="image" src="https://github.com/user-attachments/assets/0d8811c5-8c4b-49f2-b2f4-e1665edde72e" />
+   <img width="1907" height="902" alt="image" src="https://github.com/user-attachments/assets/11617b36-c6bc-4c30-aa7a-d9554623e9b8" />
+   
 2. Student registration form.
-3. Duplicate email validation.
-4. Successful student login.
-5. Student Dashboard showing academic information.
-6. Student Profile showing available CGPA and attendance.
-7. Admin Dashboard.
-8. Admin academic information management.
-9. Student attempting to access an Admin page and being denied.
-10. Admin attempting to access a student-only page and being denied.
-11. Event management and updated student-facing Events page.
-12. Feedback submission and administrative review.
-13. Audit logs, where applicable.
-14. Databases and tables in phpMyAdmin.
-15. Successful SQL import.
-16. GitHub repository with source code and documentation.
+   <img width="1910" height="910" alt="image" src="https://github.com/user-attachments/assets/cf3a827d-7c8c-4bca-a2d5-952f9233ea09" />
+   <img width="1906" height="903" alt="image" src="https://github.com/user-attachments/assets/7681dfcc-fbe8-42f9-b117-bf0e4d0e02d8" />
 
-Use screenshots from the actual application as evidence of functionality.
+3. Duplicate email validation.
+   <img width="837" height="441" alt="image" src="https://github.com/user-attachments/assets/a6020636-b3f6-4325-875a-e5c42fb64d84" />
+
+4. Successful student login.
+   <img width="846" height="441" alt="image" src="https://github.com/user-attachments/assets/2968f0c9-c7c5-459c-a2a7-75f39020a3ed" />
+   
+5. Student Dashboard showing academic information.
+   <img width="1906" height="875" alt="image" src="https://github.com/user-attachments/assets/7cc1f02c-12a3-4942-8f30-57d7113ef562" />
+   <img width="1902" height="906" alt="image" src="https://github.com/user-attachments/assets/41e81c1c-f6d2-4d85-a871-85869c647818" />
+   
+6. Student Profile showing available CGPA and attendance.
+   <img width="1907" height="903" alt="image" src="https://github.com/user-attachments/assets/c181559f-57fa-4af2-978c-4115406309df" />
+
+7. Admin Dashboard.
+   <img width="1910" height="887" alt="image" src="https://github.com/user-attachments/assets/a478bc54-3e65-4b2a-a63c-b3c91d172280" />
+   <img width="1907" height="846" alt="image" src="https://github.com/user-attachments/assets/969ad318-80fa-4f12-9bda-2be10c1b284b" />
+   <img width="1902" height="901" alt="image" src="https://github.com/user-attachments/assets/4fa4d5f2-b423-472d-93ed-f2d4a2cea5c6" />
+
+8. Admin academic information management.
+   <img width="1913" height="910" alt="image" src="https://github.com/user-attachments/assets/40cdd7a6-56e8-49dd-9428-7ad4bca63ab4" />
+   <img width="1912" height="911" alt="image" src="https://github.com/user-attachments/assets/c52f9963-d9e9-4fab-8a45-cb8cb5cb7880" />
+   
+9. Student attempting to access an Admin page and being denied.
+    <img width="838" height="229" alt="image" src="https://github.com/user-attachments/assets/66a78d56-b08d-4236-81e7-261ad83492ca" />
+    
+10. Admin attempting to access a student-only page and being denied.
+    <img width="853" height="190" alt="image" src="https://github.com/user-attachments/assets/be5b132a-3316-47c2-b894-8e97f1282a47" />
+
+11. Event management page.
+    <img width="1917" height="903" alt="image" src="https://github.com/user-attachments/assets/b843c18c-6772-4e24-9eca-69313dbaffec" />
+    <img width="1911" height="908" alt="image" src="https://github.com/user-attachments/assets/8d582a40-091a-4f0f-9670-ee966e4b8275" />
+
+12. Feedback submission and administrative review.
+    <img width="1905" height="817" alt="image" src="https://github.com/user-attachments/assets/ff9c7c7c-3419-4c56-aa20-450e85319281" />
+    
+
+13. Audit logs, where applicable.
+    <img width="1907" height="885" alt="image" src="https://github.com/user-attachments/assets/d728f427-6921-4866-a4cb-f1c9f12dcefc" />
+
+14. Databases and tables in phpMyAdmin.
+    <img width="1917" height="693" alt="image" src="https://github.com/user-attachments/assets/94a4e5ea-42d1-471b-841f-200b6a253894" />
+    <img width="1911" height="682" alt="image" src="https://github.com/user-attachments/assets/a8789531-6416-4105-bb83-eb0b5a564276" />
+    <img width="1917" height="925" alt="image" src="https://github.com/user-attachments/assets/dfb699b0-af02-400d-9747-51e5f20f6906" />
+    <img width="1917" height="692" alt="image" src="https://github.com/user-attachments/assets/54ed2018-7c15-4382-a99e-c1ef0b90a596" />
+    <img width="1913" height="697" alt="image" src="https://github.com/user-attachments/assets/44203eb2-a767-4961-ba1a-8b79d8183dd1" />
+    <img width="1917" height="702" alt="image" src="https://github.com/user-attachments/assets/6e7c3dcc-5a06-49db-af61-c254fee2726d" />
+    <img width="1917" height="927" alt="image" src="https://github.com/user-attachments/assets/590089b7-6758-406e-bf7c-22644c71a26c" />
+    <img width="1913" height="688" alt="image" src="https://github.com/user-attachments/assets/2d8b8da9-754b-48c4-9304-3db4584f80a6" />
+    <img width="1915" height="692" alt="image" src="https://github.com/user-attachments/assets/ef908068-27a3-46db-a2c6-ddce795dea62" />
+    <img width="1917" height="710" alt="image" src="https://github.com/user-attachments/assets/3e484768-e2b2-4ff1-ae30-bc5f9e302536" />
+    <img width="1917" height="685" alt="image" src="https://github.com/user-attachments/assets/91c19d0b-c479-46e7-b0f3-3959392a23a1" />
+    <img width="1917" height="707" alt="image" src="https://github.com/user-attachments/assets/914ca118-52c7-4503-ab78-e4b61d527240" />
+
 
 ---
 
